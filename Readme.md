@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Иван Попаль](https://up.htmlacademy.ru/ecmascript/23/user/16977).
-* Наставник: `Неизвестно`.
+* Наставник: [Yulia Volkova](https://up.htmlacademy.ru/ecmascript/23/user/423707).
 
 ---
 
