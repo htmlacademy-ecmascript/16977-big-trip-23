@@ -1,10 +1,6 @@
 import { createElement } from '../render.js';
 
-const createTripListItemTemplate = (data) => {
-  return (
-    `<li class="trip-events__item">${data}</li>`
-  );
-};
+const createTripListItemTemplate = (data) => `<li class="trip-events__item">${data}</li>`;
 
 export default class TripListItem {
   constructor(data) {
