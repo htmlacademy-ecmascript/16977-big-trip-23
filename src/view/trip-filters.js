@@ -24,7 +24,7 @@ const createFilterTypeTemplate = (data) => `
 
 const createTripFiltersTemplate = () => `
   <form class="trip-filters" action="#" method="get">
-    ${FILTER_TYPES.map(item => createFilterTypeTemplate(item)).join('')}
+    ${FILTER_TYPES.map((item) => createFilterTypeTemplate(item)).join('')}
 
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;

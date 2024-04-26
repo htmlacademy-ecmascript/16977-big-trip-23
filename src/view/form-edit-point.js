@@ -80,7 +80,7 @@ const createFormEditPointTemplate = () => `
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
 
-            ${TRAVEL_TYPES.map(item => createTravelTypeTemplate(item)).join('')}
+            ${TRAVEL_TYPES.map((item) => createTravelTypeTemplate(item)).join('')}
           </fieldset>
         </div>
       </div>
@@ -91,7 +91,7 @@ const createFormEditPointTemplate = () => `
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
         <datalist id="destination-list-1">
-          ${TRAVEL_CITIES.map(item => createTravelCitiesTemplate(item)).join('')}
+          ${TRAVEL_CITIES.map((item) => createTravelCitiesTemplate(item)).join('')}
         </datalist>
       </div>
 
@@ -122,7 +122,7 @@ const createFormEditPointTemplate = () => `
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
-          ${TRAVEL_OFFERS.map(item => createTravelOffersTemplate(item)).join('')}
+          ${TRAVEL_OFFERS.map((item) => createTravelOffersTemplate(item)).join('')}
         </div>
       </section>
 
