@@ -1,20 +1,5 @@
 import { createElement } from '../render.js';
-
-const FILTER_TYPES = [
-  {
-    type: 'Everything',
-    checked: true,
-  },
-  {
-    type: 'Future',
-  },
-  {
-    type: 'Present',
-  },
-  {
-    type: 'Past',
-  },
-];
+import { FILTER_TYPES } from '../constants.js';
 
 const createFilterTypeTemplate = (data) => `
   <div class="trip-filters__filter">

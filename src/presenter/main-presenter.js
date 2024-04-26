@@ -1,14 +1,13 @@
 import { render, RenderPosition } from '../render.js';
+import { EVENT_POINT_COUNT } from '../constants.js';
 import TripInfo from '../view/trip-info.js';
 import TripFilters from '../view/trip-filters.js';
-import EventAddBtn from '../view/event-add-btn.js';
+import EventAddButton from '../view/event-add-button.js';
 import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripListItem from '../view/trip-list-item.js';
 import FormEditPoint from '../view/form-edit-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
-
-const EVENT_POINT_COUNT = 3;
 
 export default class MainPresenter {
   constructor() {
@@ -28,8 +27,8 @@ export default class MainPresenter {
     render(new TripFilters(), this.tripFilters, RenderPosition.BEFOREEND);
   }
 
-  renderEventAddBtn() {
-    render(new EventAddBtn(), this.tripMain, RenderPosition.BEFOREEND);
+  renderEventAddButton() {
+    render(new EventAddButton(), this.tripMain, RenderPosition.BEFOREEND);
   }
 
   renderTripSort() {
@@ -61,7 +60,7 @@ export default class MainPresenter {
   init() {
     this.renderTripInfo();
     this.renderTripFilters();
-    this.renderEventAddBtn();
+    this.renderEventAddButton();
     this.renderTripSort();
     this.renderTripListContainer();
     this.renderFormEditPoint();
