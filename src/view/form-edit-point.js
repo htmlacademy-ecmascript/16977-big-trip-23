@@ -31,7 +31,7 @@ const createDestinationPhotoTemplate = (src, description) => `<img class="event_
 const createDestinationPhotosTemplate = (pictures) => `
   <div class="event__photos-container">
     <div class="event__photos-tape">
-      ${pictures.map((picture) => createDestinationPhotoTemplate(picture.src, picture.description))}
+      ${pictures.map((picture) => createDestinationPhotoTemplate(picture.src, picture.description)).join('')}
     </div>
   </div>`;
 
