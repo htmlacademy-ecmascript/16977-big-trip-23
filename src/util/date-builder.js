@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { timeInMillisecond } from '../constants';
+import { TimeInMillisecond } from '../constants';
 
 export default class DateBuilder {
   constructor({ date, dateFrom, dateTo }) {
@@ -25,18 +25,18 @@ export default class DateBuilder {
   }
 
   getFullDateAndTimeCalendarFormat() {
-    return dayjs(this.date).format('DD-MM-YY HH:ss');
+    return dayjs(this.date).format('DD/MM/YY HH:ss');
   }
 
   getDifferenceTime() {
     const differenceMillisecond = dayjs(this.dateTo).diff(this.dateFrom, 'millisecond');
     let currentDifference;
 
-    if (differenceMillisecond < timeInMillisecond.HOUR) {
+    if (differenceMillisecond < TimeInMillisecond.HOUR) {
       currentDifference = dayjs(differenceMillisecond).format('mm[M]');
-    } else if ((differenceMillisecond >= timeInMillisecond.HOUR) && (differenceMillisecond < timeInMillisecond.DAY)) {
+    } else if ((differenceMillisecond >= TimeInMillisecond.HOUR) && (differenceMillisecond < TimeInMillisecond.DAY)) {
       currentDifference = dayjs(differenceMillisecond).format('HH[H] mm[M]');
-    } else if (differenceMillisecond >= timeInMillisecond.DAY) {
+    } else if (differenceMillisecond >= TimeInMillisecond.DAY) {
       currentDifference = dayjs(differenceMillisecond).format('DD[D] HH[H] mm[M]');
     }
 

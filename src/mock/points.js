@@ -103,7 +103,7 @@ export const points = [
     'basePrice': 1541,
     'dateFrom': '2024-05-18T15:35:07.519Z',
     'dateTo': '2024-05-20T10:12:07.519Z',
-    'destination': '73678b0c-ba4f-43bb-96f4-4e55c0b610c6',
+    'destination': '4ce2839c-5b35-4928-9381-fc842e567e5b',
     'isFavorite': false,
     'offers': [],
     'type': 'sightseeing'

@@ -1,4 +1,3 @@
-import { CLASS_HIDDEN_TEMPLATE } from '../constants.js';
 import { createElement } from '../render.js';
 import DateBuilder from '../util/date-builder.js';
 
@@ -35,16 +34,37 @@ const createDestinationPhotosTemplate = (pictures) => `
     </div>
   </div>`;
 
-const createDestinationTemplate = (destination) => {
+const createDestinationSectionTemplate = (destination) => {
   const { description, name, pictures } = destination;
 
-  return (`
-  <section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination ${!name ? CLASS_HIDDEN_TEMPLATE : ''}">${name}</h3>
-    <p class="event__destination-description ${!description ? CLASS_HIDDEN_TEMPLATE : ''}">${description}</p>
+  if (!description.length && !pictures.length) {
+    return '';
+  }
 
-    ${createDestinationPhotosTemplate(pictures)}
-  </section>`);
+  return (`
+    <section class="event__section  event__section--destination">
+      ${description.length ? `
+        <h3 class="event__section-title  event__section-title--destination">${name}</h3>
+        <p class="event__destination-description">${description}</p>
+        ` : ''}
+
+      ${pictures.length ? createDestinationPhotosTemplate(pictures) : ''}
+    </section>`);
+};
+
+const createOffersSectionTemplate = ({ offersByTypeList, type, currentOffers }) => {
+  if (!offersByTypeList.length) {
+    return '';
+  }
+
+  return (`
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+        ${offersByTypeList.map((offer) => createTravelOffersTemplate({ type, offer, currentOffers })).join('')}
+      </div>
+    </section>`);
 };
 
 const createFormEditPointTemplate = ({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) => {
@@ -108,15 +128,9 @@ const createFormEditPointTemplate = ({ point, currentDestination, currentOffers,
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        ${createOffersSectionTemplate({ offersByTypeList: offersByType.offers, type, currentOffers })}
 
-          <div class="event__available-offers">
-            ${offersByType.offers.map((offer) => createTravelOffersTemplate({ type, offer, currentOffers })).join('')}
-          </div>
-        </section>
-
-        ${createDestinationTemplate(currentDestination)}
+        ${createDestinationSectionTemplate(currentDestination)}
       </section>
     </form>`);
 };

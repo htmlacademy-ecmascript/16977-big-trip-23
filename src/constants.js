@@ -40,11 +40,9 @@ const TRAVEL_SORT_ITEMS = [
   },
 ];
 
-const timeInMillisecond = {
+const TimeInMillisecond = {
   HOUR: 3600000,
   DAY: 86400000,
 };
 
-const CLASS_HIDDEN_TEMPLATE = 'visually-hidden';
-
-export { FILTER_TYPES, TRAVEL_SORT_ITEMS, timeInMillisecond, CLASS_HIDDEN_TEMPLATE };
+export { FILTER_TYPES, TRAVEL_SORT_ITEMS, TimeInMillisecond };
