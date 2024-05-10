@@ -1,5 +1,6 @@
 import { render, RenderPosition } from '../render.js';
-import { EVENT_POINT_COUNT } from '../constants.js';
+import { getRandomInt } from '../util/util.js';
+
 import TripInfo from '../view/trip-info.js';
 import TripFilters from '../view/trip-filters.js';
 import EventAddButton from '../view/event-add-button.js';
@@ -7,10 +8,15 @@ import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripListItem from '../view/trip-list-item.js';
 import FormEditPoint from '../view/form-edit-point.js';
+import FormAddNewPoint from '../view/form-add-new-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
 
 export default class MainPresenter {
-  constructor() {
+  constructor({ pointsModel, destinationsModel, offersModel }) {
+    this.pointsModel = pointsModel;
+    this.destinationsModel = destinationsModel;
+    this.offersModel = offersModel;
+
     this.pageHeader = document.querySelector('.page-header');
     this.tripMain = this.pageHeader.querySelector('.trip-main');
     this.tripFilters = this.pageHeader.querySelector('.trip-controls__filters');
@@ -39,31 +45,69 @@ export default class MainPresenter {
     render(new TripListContainer(), this.tripEvents, RenderPosition.BEFOREEND);
   }
 
-  renderFormEditPoint() {
+  renderFormEditPoint({ point, destinationsModel, offersModel, mainOffers, mainDestinations }) {
     this.tripEventsList = this.tripEvents.querySelector('.trip-events__list');
 
-    const formEditPoint = new FormEditPoint();
+    const currentDestination = destinationsModel.getDestinationByID(point);
+    const currentOffers = offersModel.getOffersCurrentPoint(point);
+
+    const formEditPoint = new FormEditPoint({ point, currentDestination, currentOffers, mainOffers, mainDestinations });
 
     render(new TripListItem(formEditPoint.getTemplate()), this.tripEventsList, RenderPosition.BEFOREEND);
   }
 
-  renderTripEventPoint() {
+  renderAddNewPoint({ mainOffers, mainDestinations }) {
     this.tripEventsList = this.tripEvents.querySelector('.trip-events__list');
 
-    const tripEventPoint = new TripEventPoint();
+    const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
 
-    for (let i = 0; i < EVENT_POINT_COUNT; i++) {
-      render(new TripListItem(tripEventPoint.getTemplate()), this.tripEventsList, RenderPosition.BEFOREEND);
-    }
+    render(new TripListItem(formAddNewPoint.getTemplate()), this.tripEventsList, RenderPosition.BEFOREEND);
+  }
+
+  renderTripEventPoint({ points, destinationsModel, offersModel }) {
+    this.tripEventsList = this.tripEvents.querySelector('.trip-events__list');
+
+    points.forEach((point) => {
+      const currentDestination = destinationsModel.getDestinationByID(point);
+      const currentOffers = offersModel.getOffersCurrentPoint(point);
+
+      const tripEventPoint = new TripEventPoint({ point, currentDestination, currentOffers });
+      const tripListItem = new TripListItem(tripEventPoint.getTemplate());
+
+      render(tripListItem, this.tripEventsList, RenderPosition.BEFOREEND);
+    });
   }
 
   init() {
+    this.mainPoints = [...this.pointsModel.getPoints()];
+    this.mainOffers = [...this.offersModel.getOffers()];
+    this.mainDestinations = [...this.destinationsModel.getDestinations()];
+
     this.renderTripInfo();
     this.renderTripFilters();
     this.renderEventAddButton();
+
     this.renderTripSort();
     this.renderTripListContainer();
-    this.renderFormEditPoint();
-    this.renderTripEventPoint();
+
+    this.renderFormEditPoint({
+      point: this.mainPoints[getRandomInt(0, this.mainPoints.length)],
+      destinationsModel: this.destinationsModel,
+      offersModel: this.offersModel,
+      mainOffers: this.mainOffers,
+      mainDestinations: this.mainDestinations
+    });
+
+    // Блок на будущее, в задании пока нет рекомендаций его поазывать
+    // this.renderAddNewPoint({
+    //   mainOffers: this.mainOffers,
+    //   mainDestinations: this.mainDestinations
+    // });
+
+    this.renderTripEventPoint({
+      points: this.mainPoints,
+      destinationsModel: this.destinationsModel,
+      offersModel: this.offersModel
+    });
   }
 }
