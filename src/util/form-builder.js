@@ -1,5 +1,4 @@
-import { createElement } from '../render.js';
-import DateBuilder from '../util/date-builder.js';
+import DateBuilder from './date-builder.js';
 
 const createTravelTypeTemplate = (type) => `
   <div class="event__type-item">
@@ -23,6 +22,21 @@ const createTravelOffersTemplate = ({ type, offer, currentOffers }) => {
         <span class="event__offer-price">${price}</span>
       </label>
     </div>`);
+};
+
+const createOffersSectionTemplate = ({ offersByTypeList, type, currentOffers }) => {
+  if (!offersByTypeList.length) {
+    return '';
+  }
+
+  return (`
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+        ${offersByTypeList.map((offer) => createTravelOffersTemplate({ type, offer, currentOffers })).join('')}
+      </div>
+    </section>`);
 };
 
 const createDestinationPhotoTemplate = (src, description) => `<img class="event__photo" src="${src}" alt="${description}">`;
@@ -52,22 +66,7 @@ const createDestinationSectionTemplate = (destination) => {
     </section>`);
 };
 
-const createOffersSectionTemplate = ({ offersByTypeList, type, currentOffers }) => {
-  if (!offersByTypeList.length) {
-    return '';
-  }
-
-  return (`
-    <section class="event__section  event__section--offers">
-      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-      <div class="event__available-offers">
-        ${offersByTypeList.map((offer) => createTravelOffersTemplate({ type, offer, currentOffers })).join('')}
-      </div>
-    </section>`);
-};
-
-const createFormEditPointTemplate = ({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) => {
+const createFormPointTemplate = ({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) => {
   const { basePrice, dateFrom, dateTo, type } = point;
   const { name } = currentDestination;
 
@@ -135,7 +134,7 @@ const createFormEditPointTemplate = ({ point, currentDestination, currentOffers,
     </form>`);
 };
 
-export default class FormEditPoint {
+export default class FormBuilder {
   constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) {
     this.point = point;
     this.currentDestination = currentDestination;
@@ -144,25 +143,13 @@ export default class FormEditPoint {
     this.mainDestinations = mainDestinations;
   }
 
-  getTemplate() {
-    return createFormEditPointTemplate({
+  getFormPointTemplate() {
+    return createFormPointTemplate({
       point: this.point,
       currentDestination: this.currentDestination,
       currentOffers: this.currentOffers,
       mainOffers: this.mainOffers,
       mainDestinations: this.mainDestinations
     });
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

@@ -7,8 +7,8 @@ import EventAddButton from '../view/event-add-button.js';
 import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripListItem from '../view/trip-list-item.js';
-import FormEditPoint from '../view/form-edit-point.js';
-import FormAddNewPoint from '../view/form-add-new-point.js';
+import FormEditPoint from '../view/form-point/form-edit-point.js';
+import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
 
 export default class MainPresenter {
