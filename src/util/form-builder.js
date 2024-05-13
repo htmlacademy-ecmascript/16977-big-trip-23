@@ -135,21 +135,27 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
 };
 
 export default class FormBuilder {
+  #point = null;
+  #currentDestination = null;
+  #currentOffers = [];
+  #mainOffers = [];
+  #mainDestinations = [];
+
   constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) {
-    this.point = point;
-    this.currentDestination = currentDestination;
-    this.currentOffers = currentOffers;
-    this.mainOffers = mainOffers;
-    this.mainDestinations = mainDestinations;
+    this.#point = point;
+    this.#currentDestination = currentDestination;
+    this.#currentOffers = currentOffers;
+    this.#mainOffers = mainOffers;
+    this.#mainDestinations = mainDestinations;
   }
 
   getFormPointTemplate() {
     return createFormPointTemplate({
-      point: this.point,
-      currentDestination: this.currentDestination,
-      currentOffers: this.currentOffers,
-      mainOffers: this.mainOffers,
-      mainDestinations: this.mainDestinations
+      point: this.#point,
+      currentDestination: this.#currentDestination,
+      currentOffers: this.#currentOffers,
+      mainOffers: this.#mainOffers,
+      mainDestinations: this.#mainDestinations
     });
   }
 }

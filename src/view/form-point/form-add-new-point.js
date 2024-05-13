@@ -1,4 +1,4 @@
-import { createElement } from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 import FormBuilder from '../../util/form-builder.js';
 
 const DEFAULT_TRAVEL = {
@@ -16,34 +16,29 @@ const DEFAULT_TRAVEL = {
   'type': 'taxi'
 };
 
-export default class FormAddNewPoint {
+export default class FormAddNewPoint extends AbstractView {
+  #point = null;
+  #currentDestination = null;
+  #currentOffers = [];
+  #mainOffers = [];
+  #mainDestinations = [];
+
   constructor({ mainOffers, mainDestinations }) {
-    this.point = DEFAULT_TRAVEL;
-    this.currentDestination = DEFAULT_TRAVEL.destination;
-    this.currentOffers = DEFAULT_TRAVEL.offers;
-    this.mainOffers = mainOffers;
-    this.mainDestinations = mainDestinations;
+    super();
+    this.#point = DEFAULT_TRAVEL;
+    this.#currentDestination = DEFAULT_TRAVEL.destination;
+    this.#currentOffers = DEFAULT_TRAVEL.offers;
+    this.#mainOffers = mainOffers;
+    this.#mainDestinations = mainDestinations;
   }
 
-  getTemplate() {
+  get template() {
     return new FormBuilder({
-      point: this.point,
-      currentDestination: this.currentDestination,
-      currentOffers: this.currentOffers,
-      mainOffers: this.mainOffers,
-      mainDestinations: this.mainDestinations
+      point: this.#point,
+      currentDestination: this.#currentDestination,
+      currentOffers: this.#currentOffers,
+      mainOffers: this.#mainOffers,
+      mainDestinations: this.#mainDestinations
     }).getFormPointTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

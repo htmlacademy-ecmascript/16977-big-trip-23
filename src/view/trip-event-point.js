@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import DateBuilder from '../util/date-builder.js';
 
 const createEventOfferTemplate = (offer) => `
@@ -57,26 +57,19 @@ const createTripEventPointTemplate = ({ point, currentDestination, currentOffers
   </div>`;
 };
 
-export default class TripEventPoint {
+export default class TripEventPoint extends AbstractView {
+  #point = [];
+  #currentDestination = [];
+  #currentOffers = [];
+
   constructor({ point, currentDestination, currentOffers }) {
-    this.point = point;
-    this.currentDestination = currentDestination;
-    this.currentOffers = currentOffers;
+    super();
+    this.#point = point;
+    this.#currentDestination = currentDestination;
+    this.#currentOffers = currentOffers;
   }
 
-  getTemplate() {
-    return createTripEventPointTemplate({ point: this.point, currentDestination: this.currentDestination, currentOffers: this.currentOffers });
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createTripEventPointTemplate({ point: this.#point, currentDestination: this.#currentDestination, currentOffers: this.#currentOffers });
   }
 }

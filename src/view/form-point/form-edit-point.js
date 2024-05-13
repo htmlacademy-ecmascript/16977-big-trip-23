@@ -1,34 +1,29 @@
-import { createElement } from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 import FormBuilder from '../../util/form-builder.js';
 
-export default class FormEditPoint {
+export default class FormEditPoint extends AbstractView {
+  #point = null;
+  #currentDestination = null;
+  #currentOffers = [];
+  #mainOffers = [];
+  #mainDestinations = [];
+
   constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) {
-    this.point = point;
-    this.currentDestination = currentDestination;
-    this.currentOffers = currentOffers;
-    this.mainOffers = mainOffers;
-    this.mainDestinations = mainDestinations;
+    super();
+    this.#point = point;
+    this.#currentDestination = currentDestination;
+    this.#currentOffers = currentOffers;
+    this.#mainOffers = mainOffers;
+    this.#mainDestinations = mainDestinations;
   }
 
-  getTemplate() {
+  get template() {
     return new FormBuilder({
-      point: this.point,
-      currentDestination: this.currentDestination,
-      currentOffers: this.currentOffers,
-      mainOffers: this.mainOffers,
-      mainDestinations: this.mainDestinations
+      point: this.#point,
+      currentDestination: this.#currentDestination,
+      currentOffers: this.#currentOffers,
+      mainOffers: this.#mainOffers,
+      mainDestinations: this.#mainDestinations
     }).getFormPointTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

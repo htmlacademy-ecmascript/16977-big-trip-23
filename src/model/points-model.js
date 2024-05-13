@@ -1,9 +1,9 @@
 import { points } from '../mock/points.js';
 
 export default class PointsModel {
-  points = points;
+  #points = points;
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 }

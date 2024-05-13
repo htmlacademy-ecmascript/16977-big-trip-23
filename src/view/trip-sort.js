@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { TRAVEL_SORT_ITEMS } from '../constants.js';
 
 const createTripSortItemTemplate = (data) => `
@@ -13,20 +13,8 @@ const createTripSortTemplate = () => `
     ${TRAVEL_SORT_ITEMS.map((item) => createTripSortItemTemplate(item)).join('')}
   </form>`;
 
-export default class TripSort {
-  getTemplate() {
+export default class TripSort extends AbstractView {
+  get template() {
     return createTripSortTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
