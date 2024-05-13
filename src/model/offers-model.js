@@ -1,10 +1,10 @@
 import { offers } from '../mock/offers.js';
 
 export default class OffersModel {
-  offers = offers;
+  #offers = offers;
 
-  getOffers() {
-    return this.offers;
+  get offers() {
+    return this.#offers;
   }
 
   getOffersCurrentPoint(point) {

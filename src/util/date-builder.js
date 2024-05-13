@@ -1,35 +1,39 @@
 import dayjs from 'dayjs';
-import { TimeInMillisecond } from '../constants';
+import { TimeInMillisecond } from '../constants.js';
 
 export default class DateBuilder {
+  #date = null;
+  #dateFrom = null;
+  #dateTo = null;
+
   constructor({ date, dateFrom, dateTo }) {
-    this.date = date;
-    this.dateFrom = dateFrom;
-    this.dateTo = dateTo;
+    this.#date = date;
+    this.#dateFrom = dateFrom;
+    this.#dateTo = dateTo;
   }
 
   getTime() {
-    return dayjs(this.date).format('HH:ss');
+    return dayjs(this.#date).format('HH:ss');
   }
 
   getMonthAndDay() {
-    return dayjs(this.date).format('MMM DD');
+    return dayjs(this.#date).format('MMM DD');
   }
 
   getFullDate() {
-    return dayjs(this.date).format('YYYY-MM-DD');
+    return dayjs(this.#date).format('YYYY-MM-DD');
   }
 
   getFullDateAndTime() {
-    return dayjs(this.date).format('YYYY-MM-DDTHH:ss');
+    return dayjs(this.#date).format('YYYY-MM-DDTHH:ss');
   }
 
   getFullDateAndTimeCalendarFormat() {
-    return dayjs(this.date).format('DD/MM/YY HH:ss');
+    return dayjs(this.#date).format('DD/MM/YY HH:ss');
   }
 
   getDifferenceTime() {
-    const differenceMillisecond = dayjs(this.dateTo).diff(this.dateFrom, 'millisecond');
+    const differenceMillisecond = dayjs(this.#dateTo).diff(this.#dateFrom, 'millisecond');
     let currentDifference;
 
     if (differenceMillisecond < TimeInMillisecond.HOUR) {

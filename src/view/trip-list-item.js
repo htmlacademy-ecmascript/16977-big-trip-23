@@ -1,25 +1,47 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createTripListItemTemplate = (data) => `<li class="trip-events__item">${data}</li>`;
 
-export default class TripListItem {
-  constructor(data) {
-    this.data = data;
-  }
+export default class TripListItem extends AbstractView {
+  #data = null;
 
-  getTemplate() {
-    return createTripListItemTemplate(this.data);
-  }
+  #rollupButton = null;
+  #formEventEdit = null;
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  #handleRollupClick = null;
+  #handleFormSubmit = null;
+
+  constructor({ data, onRollupClick, onFormSubmit }) {
+    super();
+    this.#data = data;
+
+    this.#handleRollupClick = onRollupClick;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.#rollupButton = this.element.querySelector('.event__rollup-btn');
+    this.#formEventEdit = this.element.querySelector('.event--edit');
+
+
+    if (this.#rollupButton) {
+      this.#rollupButton.addEventListener('click', this.#rollupClickHandler);
     }
 
-    return this.element;
+    if (this.#formEventEdit) {
+      this.#formEventEdit.addEventListener('submit', this.#formSubmitHandler);
+    }
   }
 
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createTripListItemTemplate(this.#data);
   }
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }
