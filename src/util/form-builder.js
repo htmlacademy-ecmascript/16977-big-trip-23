@@ -135,8 +135,8 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
 };
 
 export default class FormBuilder {
-  #point = null;
-  #currentDestination = null;
+  #point = [];
+  #currentDestination = [];
   #currentOffers = [];
   #mainOffers = [];
   #mainDestinations = [];

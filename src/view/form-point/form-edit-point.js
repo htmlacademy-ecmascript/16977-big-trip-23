@@ -2,8 +2,8 @@ import AbstractView from '../../framework/view/abstract-view.js';
 import FormBuilder from '../../util/form-builder.js';
 
 export default class FormEditPoint extends AbstractView {
-  #point = null;
-  #currentDestination = null;
+  #point = [];
+  #currentDestination = [];
   #currentOffers = [];
   #mainOffers = [];
   #mainDestinations = [];

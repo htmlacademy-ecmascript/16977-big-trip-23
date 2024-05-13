@@ -17,8 +17,8 @@ const DEFAULT_TRAVEL = {
 };
 
 export default class FormAddNewPoint extends AbstractView {
-  #point = null;
-  #currentDestination = null;
+  #point = [];
+  #currentDestination = [];
   #currentOffers = [];
   #mainOffers = [];
   #mainDestinations = [];

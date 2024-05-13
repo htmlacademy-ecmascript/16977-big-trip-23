@@ -11,8 +11,8 @@ import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
 
 export default class MainPresenter {
-  #pointsModel = null;
-  #destinationsModel = null;
+  #pointsModel = [];
+  #destinationsModel = [];
   #offersModel = [];
   #pageHeader = null;
   #tripMain = null;
@@ -33,27 +33,27 @@ export default class MainPresenter {
     this.#tripEvents = this.#pageMain.querySelector('.trip-events');
   }
 
-  renderTripInfo() {
+  #renderTripInfo() {
     render(new TripInfo(), this.#tripMain, RenderPosition.AFTERBEGIN);
   }
 
-  renderTripFilters() {
+  #renderTripFilters() {
     render(new TripFilters(), this.#tripFilters, RenderPosition.BEFOREEND);
   }
 
-  renderEventAddButton() {
+  #renderEventAddButton() {
     render(new EventAddButton(), this.#tripMain, RenderPosition.BEFOREEND);
   }
 
-  renderTripSort() {
+  #renderTripSort() {
     render(new TripSort(), this.#tripEvents, RenderPosition.BEFOREEND);
   }
 
-  renderTripListContainer() {
+  #renderTripListContainer() {
     render(new TripListContainer(), this.#tripEvents, RenderPosition.BEFOREEND);
   }
 
-  renderFormEditPoint({ point, destinationsModel, offersModel, mainOffers, mainDestinations }) {
+  #renderFormEditPoint({ point, destinationsModel, offersModel, mainOffers, mainDestinations }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
 
     const currentDestination = destinationsModel.getDestinationByID(point);
@@ -64,7 +64,7 @@ export default class MainPresenter {
     render(new TripListItem(formEditPoint.template), this.tripEventsList, RenderPosition.BEFOREEND);
   }
 
-  renderAddNewPoint({ mainOffers, mainDestinations }) {
+  #renderAddNewPoint({ mainOffers, mainDestinations }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
 
     const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
@@ -72,7 +72,7 @@ export default class MainPresenter {
     render(new TripListItem(formAddNewPoint.template), this.tripEventsList, RenderPosition.BEFOREEND);
   }
 
-  renderTripEventPoint({ points, destinationsModel, offersModel }) {
+  #renderTripEventPoint({ points, destinationsModel, offersModel }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
 
     points.forEach((point) => {
@@ -91,14 +91,14 @@ export default class MainPresenter {
     this.mainOffers = [...this.#offersModel.offers];
     this.mainDestinations = [...this.#destinationsModel.destinations];
 
-    this.renderTripInfo();
-    this.renderTripFilters();
-    this.renderEventAddButton();
+    this.#renderTripInfo();
+    this.#renderTripFilters();
+    this.#renderEventAddButton();
 
-    this.renderTripSort();
-    this.renderTripListContainer();
+    this.#renderTripSort();
+    this.#renderTripListContainer();
 
-    // this.renderFormEditPoint({
+    // this.#renderFormEditPoint({
     //   point: this.mainPoints[getRandomInt(0, this.mainPoints.length)],
     //   destinationsModel: this.#destinationsModel,
     //   offersModel: this.#offersModel,
@@ -107,12 +107,12 @@ export default class MainPresenter {
     // });
 
     // Блок на будущее, в задании пока нет рекомендаций его поазывать
-    // this.renderAddNewPoint({
+    // this.#renderAddNewPoint({
     //   mainOffers: this.mainOffers,
     //   mainDestinations: this.mainDestinations
     // });
 
-    this.renderTripEventPoint({
+    this.#renderTripEventPoint({
       points: this.mainPoints,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel
