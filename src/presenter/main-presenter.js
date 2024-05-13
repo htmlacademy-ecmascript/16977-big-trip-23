@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../framework/render.js';
+import { render, RenderPosition, replace } from '../framework/render.js';
 
 import TripInfo from '../view/trip-info.js';
 import TripFilters from '../view/trip-filters.js';
@@ -38,30 +38,19 @@ export default class MainPresenter {
   }
 
   #renderTripFilters() {
-    render(new TripFilters(), this.#tripFilters, RenderPosition.BEFOREEND);
+    render(new TripFilters(), this.#tripFilters);
   }
 
   #renderEventAddButton() {
-    render(new EventAddButton(), this.#tripMain, RenderPosition.BEFOREEND);
+    render(new EventAddButton(), this.#tripMain);
   }
 
   #renderTripSort() {
-    render(new TripSort(), this.#tripEvents, RenderPosition.BEFOREEND);
+    render(new TripSort(), this.#tripEvents);
   }
 
   #renderTripListContainer() {
-    render(new TripListContainer(), this.#tripEvents, RenderPosition.BEFOREEND);
-  }
-
-  #renderFormEditPoint({ point, destinationsModel, offersModel, mainOffers, mainDestinations }) {
-    this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
-
-    const currentDestination = destinationsModel.getDestinationByID(point);
-    const currentOffers = offersModel.getOffersCurrentPoint(point);
-
-    const formEditPoint = new FormEditPoint({ point, currentDestination, currentOffers, mainOffers, mainDestinations });
-
-    render(new TripListItem(formEditPoint.template), this.tripEventsList, RenderPosition.BEFOREEND);
+    render(new TripListContainer(), this.#tripEvents);
   }
 
   #renderAddNewPoint({ mainOffers, mainDestinations }) {
@@ -69,53 +58,99 @@ export default class MainPresenter {
 
     const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
 
-    render(new TripListItem(formAddNewPoint.template), this.tripEventsList, RenderPosition.BEFOREEND);
+    render(new TripListItem(formAddNewPoint.template), this.tripEventsList);
   }
 
-  #renderTripEventPoint({ points, destinationsModel, offersModel }) {
+  #renderTripEventPoint({ points, destinationsModel, offersModel, mainOffers, mainDestinations }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
 
     points.forEach((point) => {
       const currentDestination = destinationsModel.getDestinationByID(point);
       const currentOffers = offersModel.getOffersCurrentPoint(point);
 
-      const tripEventPoint = new TripEventPoint({ point, currentDestination, currentOffers });
-      const tripListItem = new TripListItem(tripEventPoint.template);
+      const escKeyDownHandler = (evt) => {
+        if (evt.key === 'Escape') {
+          evt.preventDefault();
+          replacePointInsteadForm();
+          document.removeEventListener('keydown', escKeyDownHandler);
+        }
+      };
 
-      render(tripListItem, this.tripEventsList, RenderPosition.BEFOREEND);
+      const tripEventPoint = new TripEventPoint({
+        point,
+        currentDestination,
+        currentOffers
+      });
+
+      const formEditPoint = new FormEditPoint({
+        point,
+        currentDestination,
+        currentOffers,
+        mainOffers,
+        mainDestinations,
+      });
+
+      const tripListPoint = new TripListItem({
+        data: tripEventPoint.template,
+        onRollupClick: () => {
+          replaceFormInsteadPoint();
+          document.addEventListener('keydown', escKeyDownHandler);
+        }
+      });
+
+      const tripListForm = new TripListItem({
+        data: formEditPoint.template,
+        onRollupClick: () => {
+          replacePointInsteadForm();
+          document.removeEventListener('keydown', escKeyDownHandler);
+        },
+        onFormSubmit: () => {
+          replacePointInsteadForm();
+          document.removeEventListener('keydown', escKeyDownHandler);
+        }
+      });
+
+      function replacePointInsteadForm() {
+        replace(tripListPoint, tripListForm);
+      }
+
+      function replaceFormInsteadPoint() {
+        replace(tripListForm, tripListPoint);
+      }
+
+      render(tripListPoint, this.tripEventsList);
     });
   }
 
-  init() {
-    this.mainPoints = [...this.#pointsModel.points];
-    this.mainOffers = [...this.#offersModel.offers];
-    this.mainDestinations = [...this.#destinationsModel.destinations];
-
+  #renderTripLayout() {
     this.#renderTripInfo();
     this.#renderTripFilters();
     this.#renderEventAddButton();
 
     this.#renderTripSort();
     this.#renderTripListContainer();
+  }
 
-    // this.#renderFormEditPoint({
-    //   point: this.mainPoints[getRandomInt(0, this.mainPoints.length)],
-    //   destinationsModel: this.#destinationsModel,
-    //   offersModel: this.#offersModel,
-    //   mainOffers: this.mainOffers,
-    //   mainDestinations: this.mainDestinations
-    // });
+  // Блок на будущее, в задании пока нет рекомендаций его поазывать
+  // this.#renderAddNewPoint({
+  //   mainOffers: this.mainOffers,
+  //   mainDestinations: this.mainDestinations
+  // });
 
-    // Блок на будущее, в задании пока нет рекомендаций его поазывать
-    // this.#renderAddNewPoint({
-    //   mainOffers: this.mainOffers,
-    //   mainDestinations: this.mainDestinations
-    // });
+  init() {
+    this.mainPoints = [...this.#pointsModel.points];
+    this.mainOffers = [...this.#offersModel.offers];
+    this.mainDestinations = [...this.#destinationsModel.destinations];
+
+    this.#renderTripLayout();
 
     this.#renderTripEventPoint({
       points: this.mainPoints,
       destinationsModel: this.#destinationsModel,
-      offersModel: this.#offersModel
+      offersModel: this.#offersModel,
+      mainOffers: this.mainOffers,
+      mainDestinations: this.mainDestinations
     });
+
   }
 }
