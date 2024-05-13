@@ -7,8 +7,9 @@ import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripListItem from '../view/trip-list-item.js';
 import FormEditPoint from '../view/form-point/form-edit-point.js';
-import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
+// import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
+import TripEmpty from '../view/trip-empty.js';
 
 export default class MainPresenter {
   #pointsModel = [];
@@ -38,7 +39,9 @@ export default class MainPresenter {
   }
 
   #renderTripFilters() {
-    render(new TripFilters(), this.#tripFilters);
+    render(new TripFilters({
+      mainPoints: this.mainPoints,
+    }), this.#tripFilters);
   }
 
   #renderEventAddButton() {
@@ -53,13 +56,14 @@ export default class MainPresenter {
     render(new TripListContainer(), this.#tripEvents);
   }
 
-  #renderAddNewPoint({ mainOffers, mainDestinations }) {
-    this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
+  // Вероятнее всего на будущее, когда буду описывать создания события
+  // #renderAddNewPoint({ mainOffers, mainDestinations }) {
+  //   this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
 
-    const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
+  //   const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
 
-    render(new TripListItem(formAddNewPoint.template), this.tripEventsList);
-  }
+  //   render(new TripListItem(formAddNewPoint.template), this.tripEventsList);
+  // }
 
   #renderTripEventPoint({ points, destinationsModel, offersModel, mainOffers, mainDestinations }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
@@ -122,6 +126,10 @@ export default class MainPresenter {
     });
   }
 
+  #renderTripEmpty() {
+    render(new TripEmpty(), this.#tripEvents);
+  }
+
   #renderTripLayout() {
     this.#renderTripInfo();
     this.#renderTripFilters();
@@ -144,13 +152,16 @@ export default class MainPresenter {
 
     this.#renderTripLayout();
 
-    this.#renderTripEventPoint({
-      points: this.mainPoints,
-      destinationsModel: this.#destinationsModel,
-      offersModel: this.#offersModel,
-      mainOffers: this.mainOffers,
-      mainDestinations: this.mainDestinations
-    });
-
+    if (this.mainPoints.length) {
+      this.#renderTripEventPoint({
+        points: this.mainPoints,
+        destinationsModel: this.#destinationsModel,
+        offersModel: this.#offersModel,
+        mainOffers: this.mainOffers,
+        mainDestinations: this.mainDestinations
+      });
+    } else {
+      this.#renderTripEmpty();
+    }
   }
 }
