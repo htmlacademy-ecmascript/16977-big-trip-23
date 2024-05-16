@@ -135,7 +135,6 @@ export default class MainPresenter {
     this.#renderTripFilters();
     this.#renderEventAddButton();
 
-    this.#renderTripSort();
     this.#renderTripListContainer();
   }
 
@@ -160,6 +159,8 @@ export default class MainPresenter {
         mainOffers: this.mainOffers,
         mainDestinations: this.mainDestinations
       });
+
+      this.#renderTripSort();
     } else {
       this.#renderTripEmpty();
     }

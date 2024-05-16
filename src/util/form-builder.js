@@ -1,8 +1,8 @@
 import DateBuilder from './date-builder.js';
 
-const createTravelTypeTemplate = (type) => `
+const createTravelTypeTemplate = ({ type, currentType }) => `
   <div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''}>
     <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
   </div>`;
 
@@ -89,7 +89,7 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
-              ${mainOffers.map((offer) => createTravelTypeTemplate(offer.type)).join('')}
+              ${mainOffers.map((offer) => createTravelTypeTemplate({ type: offer.type, currentType: point.type })).join('')}
             </fieldset>
           </div>
         </div>
