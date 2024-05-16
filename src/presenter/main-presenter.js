@@ -106,19 +106,13 @@ export default class MainPresenter {
 
       const tripListPoint = new TripListItem({
         data: tripEventPoint.template,
-        onRollupClick: () => {
-          showEditPoint();
-        }
+        onRollupClick: showEditPoint()
       });
 
       const tripListForm = new TripListItem({
         data: formEditPoint.template,
-        onRollupClick: () => {
-          hideEditPoint();
-        },
-        onFormSubmit: () => {
-          hideEditPoint();
-        }
+        onRollupClick: hideEditPoint(),
+        onFormSubmit: hideEditPoint()
       });
 
       function replacePointInsteadForm() {
