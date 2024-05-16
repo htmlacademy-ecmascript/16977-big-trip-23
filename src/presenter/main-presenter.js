@@ -80,6 +80,16 @@ export default class MainPresenter {
         }
       };
 
+      const showEditPoint = () => {
+        replaceFormInsteadPoint();
+        document.addEventListener('keydown', escKeyDownHandler);
+      };
+
+      const hideEditPoint = () => {
+        replacePointInsteadForm();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      };
+
       const tripEventPoint = new TripEventPoint({
         point,
         currentDestination,
@@ -97,20 +107,17 @@ export default class MainPresenter {
       const tripListPoint = new TripListItem({
         data: tripEventPoint.template,
         onRollupClick: () => {
-          replaceFormInsteadPoint();
-          document.addEventListener('keydown', escKeyDownHandler);
+          showEditPoint();
         }
       });
 
       const tripListForm = new TripListItem({
         data: formEditPoint.template,
         onRollupClick: () => {
-          replacePointInsteadForm();
-          document.removeEventListener('keydown', escKeyDownHandler);
+          hideEditPoint();
         },
         onFormSubmit: () => {
-          replacePointInsteadForm();
-          document.removeEventListener('keydown', escKeyDownHandler);
+          hideEditPoint();
         }
       });
 
