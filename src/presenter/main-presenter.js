@@ -7,7 +7,6 @@ import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripListItem from '../view/trip-list-item.js';
 import FormEditPoint from '../view/form-point/form-edit-point.js';
-// import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
 import TripEmpty from '../view/trip-empty.js';
 
@@ -55,15 +54,6 @@ export default class MainPresenter {
   #renderTripListContainer() {
     render(new TripListContainer(), this.#tripEvents);
   }
-
-  // Вероятнее всего на будущее, когда буду описывать создания события
-  // #renderAddNewPoint({ mainOffers, mainDestinations }) {
-  //   this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
-
-  //   const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
-
-  //   render(new TripListItem(formAddNewPoint.template), this.tripEventsList);
-  // }
 
   #renderTripEventPoint({ points, destinationsModel, offersModel, mainOffers, mainDestinations }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
