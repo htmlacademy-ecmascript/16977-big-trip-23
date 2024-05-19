@@ -1,19 +1,3 @@
-const FILTER_TYPES = [
-  {
-    type: 'Everything',
-    checked: true,
-  },
-  {
-    type: 'Future',
-  },
-  {
-    type: 'Present',
-  },
-  {
-    type: 'Past',
-  },
-];
-
 const TRAVEL_SORT_ITEMS = [
   {
     key: 'day',
@@ -45,4 +29,4 @@ const TimeInMillisecond = {
   DAY: 86400000,
 };
 
-export { FILTER_TYPES, TRAVEL_SORT_ITEMS, TimeInMillisecond };
+export { TRAVEL_SORT_ITEMS, TimeInMillisecond };

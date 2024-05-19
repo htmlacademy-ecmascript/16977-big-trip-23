@@ -7,8 +7,8 @@ import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripListItem from '../view/trip-list-item.js';
 import FormEditPoint from '../view/form-point/form-edit-point.js';
-import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
+import TripEmpty from '../view/trip-empty.js';
 
 export default class MainPresenter {
   #pointsModel = [];
@@ -38,7 +38,9 @@ export default class MainPresenter {
   }
 
   #renderTripFilters() {
-    render(new TripFilters(), this.#tripFilters);
+    render(new TripFilters({
+      mainPoints: this.mainPoints,
+    }), this.#tripFilters);
   }
 
   #renderEventAddButton() {
@@ -51,14 +53,6 @@ export default class MainPresenter {
 
   #renderTripListContainer() {
     render(new TripListContainer(), this.#tripEvents);
-  }
-
-  #renderAddNewPoint({ mainOffers, mainDestinations }) {
-    this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
-
-    const formAddNewPoint = new FormAddNewPoint({ mainOffers, mainDestinations });
-
-    render(new TripListItem(formAddNewPoint.template), this.tripEventsList);
   }
 
   #renderTripEventPoint({ points, destinationsModel, offersModel, mainOffers, mainDestinations }) {
@@ -74,6 +68,16 @@ export default class MainPresenter {
           replacePointInsteadForm();
           document.removeEventListener('keydown', escKeyDownHandler);
         }
+      };
+
+      const showEditPoint = () => {
+        replaceFormInsteadPoint();
+        document.addEventListener('keydown', escKeyDownHandler);
+      };
+
+      const hideEditPoint = () => {
+        replacePointInsteadForm();
+        document.removeEventListener('keydown', escKeyDownHandler);
       };
 
       const tripEventPoint = new TripEventPoint({
@@ -92,22 +96,13 @@ export default class MainPresenter {
 
       const tripListPoint = new TripListItem({
         data: tripEventPoint.template,
-        onRollupClick: () => {
-          replaceFormInsteadPoint();
-          document.addEventListener('keydown', escKeyDownHandler);
-        }
+        onRollupClick: () => showEditPoint()
       });
 
       const tripListForm = new TripListItem({
         data: formEditPoint.template,
-        onRollupClick: () => {
-          replacePointInsteadForm();
-          document.removeEventListener('keydown', escKeyDownHandler);
-        },
-        onFormSubmit: () => {
-          replacePointInsteadForm();
-          document.removeEventListener('keydown', escKeyDownHandler);
-        }
+        onRollupClick: () => hideEditPoint(),
+        onFormSubmit: () => hideEditPoint()
       });
 
       function replacePointInsteadForm() {
@@ -122,12 +117,15 @@ export default class MainPresenter {
     });
   }
 
+  #renderTripEmpty() {
+    render(new TripEmpty(), this.#tripEvents);
+  }
+
   #renderTripLayout() {
     this.#renderTripInfo();
     this.#renderTripFilters();
     this.#renderEventAddButton();
 
-    this.#renderTripSort();
     this.#renderTripListContainer();
   }
 
@@ -144,13 +142,18 @@ export default class MainPresenter {
 
     this.#renderTripLayout();
 
-    this.#renderTripEventPoint({
-      points: this.mainPoints,
-      destinationsModel: this.#destinationsModel,
-      offersModel: this.#offersModel,
-      mainOffers: this.mainOffers,
-      mainDestinations: this.mainDestinations
-    });
+    if (this.mainPoints.length) {
+      this.#renderTripEventPoint({
+        points: this.mainPoints,
+        destinationsModel: this.#destinationsModel,
+        offersModel: this.#offersModel,
+        mainOffers: this.mainOffers,
+        mainDestinations: this.mainDestinations
+      });
 
+      this.#renderTripSort();
+    } else {
+      this.#renderTripEmpty();
+    }
   }
 }
