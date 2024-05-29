@@ -1,19 +1,19 @@
-import { render, RenderPosition, replace } from '../framework/render.js';
+import { render, RenderPosition } from '../framework/render.js';
+import { updateData } from '../util/common.js';
 
 import TripInfo from '../view/trip-info.js';
 import TripFilters from '../view/trip-filters.js';
 import EventAddButton from '../view/event-add-button.js';
 import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
-import TripListItem from '../view/trip-list-item.js';
-import FormEditPoint from '../view/form-point/form-edit-point.js';
-import TripEventPoint from '../view/trip-event-point.js';
 import TripEmpty from '../view/trip-empty.js';
+import PointPresenter from './point-presenter.js';
 
 export default class MainPresenter {
   #pointsModel = [];
   #destinationsModel = [];
   #offersModel = [];
+  #pointPresenters = new Map();
   #pageHeader = null;
   #tripMain = null;
   #tripFilters = null;
@@ -31,6 +31,28 @@ export default class MainPresenter {
 
     this.#pageMain = document.querySelector('.page-main');
     this.#tripEvents = this.#pageMain.querySelector('.trip-events');
+  }
+
+  init() {
+    this.mainPoints = [...this.#pointsModel.points];
+    this.mainOffers = [...this.#offersModel.offers];
+    this.mainDestinations = [...this.#destinationsModel.destinations];
+
+    this.#renderTripLayout();
+
+    if (this.mainPoints.length) {
+      this.#renderTripEventPoints({
+        points: this.mainPoints,
+        destinationsModel: this.#destinationsModel,
+        offersModel: this.#offersModel,
+        mainOffers: this.mainOffers,
+        mainDestinations: this.mainDestinations
+      });
+
+      this.#renderTripSort();
+    } else {
+      this.#renderTripEmpty();
+    }
   }
 
   #renderTripInfo() {
@@ -55,67 +77,50 @@ export default class MainPresenter {
     render(new TripListContainer(), this.#tripEvents);
   }
 
-  #renderTripEventPoint({ points, destinationsModel, offersModel, mainOffers, mainDestinations }) {
+  #renderTripEventPoint({ point, destinationsModel, offersModel, mainOffers, mainDestinations, tripEventsList }) {
+    const pointPresenter = new PointPresenter({
+      destinationsModel,
+      offersModel,
+      mainOffers,
+      mainDestinations,
+      tripEventsList,
+      onTripEventPointUpdate: this.#handleDataChange,
+      onAllEditFormReset: this.#resetAllEditForms,
+    });
+
+    pointPresenter.init(point);
+
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #clearTripEventPoints() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
+
+  #renderTripEventPoints({ points, destinationsModel, offersModel, mainOffers, mainDestinations }) {
     this.tripEventsList = this.#tripEvents.querySelector('.trip-events__list');
 
     points.forEach((point) => {
-      const currentDestination = destinationsModel.getDestinationByID(point);
-      const currentOffers = offersModel.getOffersCurrentPoint(point);
-
-      const escKeyDownHandler = (evt) => {
-        if (evt.key === 'Escape') {
-          evt.preventDefault();
-          replacePointInsteadForm();
-          document.removeEventListener('keydown', escKeyDownHandler);
-        }
-      };
-
-      const showEditPoint = () => {
-        replaceFormInsteadPoint();
-        document.addEventListener('keydown', escKeyDownHandler);
-      };
-
-      const hideEditPoint = () => {
-        replacePointInsteadForm();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      };
-
-      const tripEventPoint = new TripEventPoint({
+      this.#renderTripEventPoint({
         point,
-        currentDestination,
-        currentOffers
-      });
-
-      const formEditPoint = new FormEditPoint({
-        point,
-        currentDestination,
-        currentOffers,
+        destinationsModel,
+        offersModel,
         mainOffers,
         mainDestinations,
+        tripEventsList: this.tripEventsList,
       });
-
-      const tripListPoint = new TripListItem({
-        data: tripEventPoint.template,
-        onRollupClick: () => showEditPoint()
-      });
-
-      const tripListForm = new TripListItem({
-        data: formEditPoint.template,
-        onRollupClick: () => hideEditPoint(),
-        onFormSubmit: () => hideEditPoint()
-      });
-
-      function replacePointInsteadForm() {
-        replace(tripListPoint, tripListForm);
-      }
-
-      function replaceFormInsteadPoint() {
-        replace(tripListForm, tripListPoint);
-      }
-
-      render(tripListPoint, this.tripEventsList);
     });
   }
+
+  #handleDataChange = (updateItem) => {
+    this.mainPoints = updateData(this.mainPoints, updateItem);
+    this.#pointPresenters.get(updateItem.id).init(updateItem);
+  };
+
+  #resetAllEditForms = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.reset());
+  };
 
   #renderTripEmpty() {
     render(new TripEmpty(), this.#tripEvents);
@@ -127,33 +132,5 @@ export default class MainPresenter {
     this.#renderEventAddButton();
 
     this.#renderTripListContainer();
-  }
-
-  // Блок на будущее, в задании пока нет рекомендаций его поазывать
-  // this.#renderAddNewPoint({
-  //   mainOffers: this.mainOffers,
-  //   mainDestinations: this.mainDestinations
-  // });
-
-  init() {
-    this.mainPoints = [...this.#pointsModel.points];
-    this.mainOffers = [...this.#offersModel.offers];
-    this.mainDestinations = [...this.#destinationsModel.destinations];
-
-    this.#renderTripLayout();
-
-    if (this.mainPoints.length) {
-      this.#renderTripEventPoint({
-        points: this.mainPoints,
-        destinationsModel: this.#destinationsModel,
-        offersModel: this.#offersModel,
-        mainOffers: this.mainOffers,
-        mainDestinations: this.mainDestinations
-      });
-
-      this.#renderTripSort();
-    } else {
-      this.#renderTripEmpty();
-    }
   }
 }

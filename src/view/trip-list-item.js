@@ -7,19 +7,23 @@ export default class TripListItem extends AbstractView {
 
   #rollupButton = null;
   #formEventEdit = null;
+  #favoriteButton = null;
 
   #handleRollupClick = null;
   #handleFormSubmit = null;
+  #handleSwitchFavorite = null;
 
-  constructor({ data, onRollupClick, onFormSubmit }) {
+  constructor({ data, onRollupClick, onFormSubmit, onFavoriteClick }) {
     super();
     this.#data = data;
 
     this.#handleRollupClick = onRollupClick;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleSwitchFavorite = onFavoriteClick;
 
     this.#rollupButton = this.element.querySelector('.event__rollup-btn');
     this.#formEventEdit = this.element.querySelector('.event--edit');
+    this.#favoriteButton = this.element.querySelector('.event__favorite-btn');
 
 
     if (this.#rollupButton) {
@@ -28,6 +32,10 @@ export default class TripListItem extends AbstractView {
 
     if (this.#formEventEdit) {
       this.#formEventEdit.addEventListener('submit', this.#formSubmitHandler);
+    }
+
+    if (this.#favoriteButton) {
+      this.#favoriteButton.addEventListener('click', this.#switchFavoriteHandler);
     }
   }
 
@@ -43,5 +51,10 @@ export default class TripListItem extends AbstractView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit();
+  };
+
+  #switchFavoriteHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSwitchFavorite();
   };
 }

@@ -29,4 +29,9 @@ const TimeInMillisecond = {
   DAY: 86400000,
 };
 
-export { TRAVEL_SORT_ITEMS, TimeInMillisecond };
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDIT: 'EDIT',
+};
+
+export { TRAVEL_SORT_ITEMS, TimeInMillisecond, Mode };
