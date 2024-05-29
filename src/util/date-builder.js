@@ -46,4 +46,8 @@ export default class DateBuilder {
 
     return currentDifference;
   }
+
+  getDurationTime() {
+    return dayjs(this.#dateTo).diff(dayjs(this.#dateFrom));
+  }
 }

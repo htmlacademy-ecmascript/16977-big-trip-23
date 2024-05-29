@@ -1,28 +1,31 @@
-const TRAVEL_SORT_ITEMS = [
-  {
-    key: 'day',
-    title: 'Day',
+const TravelSortItems = {
+  DAY: {
+    fieldName: 'day',
+    fieldTitle: 'Day',
+    fieldStatus: 'on',
     checked: true,
   },
-  {
-    key: 'event',
-    title: 'Event',
-    disabled: true,
+  EVENT: {
+    fieldName: 'event',
+    fieldTitle: 'Event',
+    fieldStatus: 'off',
   },
-  {
-    key: 'time',
-    title: 'Time',
+  TIME: {
+    fieldName: 'time',
+    fieldTitle: 'Time',
+    fieldStatus: 'on',
   },
-  {
-    key: 'price',
-    title: 'Price',
+  PRICE: {
+    fieldName: 'price',
+    fieldTitle: 'Price',
+    fieldStatus: 'on',
   },
-  {
-    key: 'offer',
-    title: 'Offers',
-    disabled: true,
+  OFFER: {
+    fieldName: 'offer',
+    fieldTitle: 'Offers',
+    fieldStatus: 'off',
   },
-];
+};
 
 const TimeInMillisecond = {
   HOUR: 3600000,
@@ -34,4 +37,4 @@ const Mode = {
   EDIT: 'EDIT',
 };
 
-export { TRAVEL_SORT_ITEMS, TimeInMillisecond, Mode };
+export { TravelSortItems, TimeInMillisecond, Mode };
