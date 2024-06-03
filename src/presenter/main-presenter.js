@@ -1,5 +1,8 @@
 import { render, RenderPosition } from '../framework/render.js';
+import { SortBuilder } from '../util/sort-builder.js';
+
 import { updateData } from '../util/common.js';
+import { TravelSortItems } from '../constants.js';
 
 import TripInfo from '../view/trip-info.js';
 import TripFilters from '../view/trip-filters.js';
@@ -8,6 +11,7 @@ import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripEmpty from '../view/trip-empty.js';
 import PointPresenter from './point-presenter.js';
+
 
 export default class MainPresenter {
   #pointsModel = [];
@@ -34,13 +38,17 @@ export default class MainPresenter {
   }
 
   init() {
-    this.mainPoints = [...this.#pointsModel.points];
+    this.mainPoints = new SortBuilder({ data: this.#pointsModel.points }).getDaySort();
     this.mainOffers = [...this.#offersModel.offers];
     this.mainDestinations = [...this.#destinationsModel.destinations];
 
     this.#renderTripLayout();
 
     if (this.mainPoints.length) {
+      this.#renderTripSort();
+
+      this.#renderTripListContainer();
+
       this.#renderTripEventPoints({
         points: this.mainPoints,
         destinationsModel: this.#destinationsModel,
@@ -48,8 +56,6 @@ export default class MainPresenter {
         mainOffers: this.mainOffers,
         mainDestinations: this.mainDestinations
       });
-
-      this.#renderTripSort();
     } else {
       this.#renderTripEmpty();
     }
@@ -70,7 +76,7 @@ export default class MainPresenter {
   }
 
   #renderTripSort() {
-    render(new TripSort(), this.#tripEvents);
+    render(new TripSort({ onTripSortChange: this.#handleTripSortChange }), this.#tripEvents);
   }
 
   #renderTripListContainer() {
@@ -130,7 +136,29 @@ export default class MainPresenter {
     this.#renderTripInfo();
     this.#renderTripFilters();
     this.#renderEventAddButton();
-
-    this.#renderTripListContainer();
   }
+
+  #handleTripSortChange = (type) => {
+    switch (type) {
+      case TravelSortItems.DAY.fieldName:
+        this.mainPoints = new SortBuilder({ data: this.#pointsModel.points }).getDaySort();
+        break;
+      case TravelSortItems.PRICE.fieldName:
+        this.mainPoints = new SortBuilder({ data: this.#pointsModel.points }).getSortByPrice();
+        break;
+      case TravelSortItems.TIME.fieldName:
+        this.mainPoints = new SortBuilder({ data: this.#pointsModel.points }).getSortByTime();
+        break;
+    }
+
+    this.#clearTripEventPoints();
+
+    this.#renderTripEventPoints({
+      points: this.mainPoints,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      mainOffers: this.mainOffers,
+      mainDestinations: this.mainDestinations
+    });
+  };
 }
