@@ -4,6 +4,7 @@ import { updateItem } from '../util/common.js';
 import FormEditPoint from '../view/form-point/form-edit-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
 
+
 export default class PointPresenter {
   #tripEventsList = null;
 
@@ -55,7 +56,7 @@ export default class PointPresenter {
       mainOffers: this.#mainOffers,
       mainDestinations: this.#mainDestinations,
       onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: () => this.#handleHideEditPoint(),
+      onFormSubmit: () => this.#handleSubmitFormEditPoint(),
     });
 
     if (prevTripEventPoint === null || prevFormEditPoint === null) {
@@ -83,6 +84,17 @@ export default class PointPresenter {
     remove(this.#tripFormEditPoint);
   }
 
+  #resetFormEditPoint() {
+    const currentDestination = this.#destinationsModel.getDestinationByID(this.point);
+    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.point);
+
+    this.#tripFormEditPoint.reset({
+      point: this.point,
+      currentDestination: currentDestination,
+      currentOffers: currentOffers,
+    });
+  }
+
   #replacePointInsteadForm() {
     replace(this.#tripListPoint, this.#tripFormEditPoint);
   }
@@ -94,6 +106,9 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+
+      this.#resetFormEditPoint();
+
       this.#replacePointInsteadForm();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
 
@@ -110,6 +125,8 @@ export default class PointPresenter {
   };
 
   #handleHideEditPoint = () => {
+    this.#resetFormEditPoint();
+
     this.#replacePointInsteadForm();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
 
@@ -120,5 +137,12 @@ export default class PointPresenter {
     const updatePoint = updateItem(this.point, { isFavorite: !this.point.isFavorite });
 
     this.#handleTripEventPointUpdate(updatePoint);
+  };
+
+  #handleSubmitFormEditPoint = () => {
+    this.#replacePointInsteadForm();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+
+    this.#mode = Mode.DEFAULT;
   };
 }
