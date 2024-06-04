@@ -1,3 +1,5 @@
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
 import FormBuilder from '../../util/form-builder.js';
 import TripListItem from '../trip-list-item.js';
@@ -13,6 +15,9 @@ export default class FormEditPoint extends AbstractStatefulView {
 
   #handleRollupClick = null;
   #handleFormSubmit = null;
+
+  #datepickerStart = null;
+  #datepickerEnd = null;
 
   constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations, onRollupClick, onFormSubmit }) {
     super();
@@ -61,6 +66,37 @@ export default class FormEditPoint extends AbstractStatefulView {
     this.#formEventEdit.addEventListener('submit', this.#formSubmitHandler);
     this.#eventTypeGroup.addEventListener('change', this.#eventTypeGroupHandler);
     this.#eventInputDestination.addEventListener('change', this.#eventInputDestinationHandler);
+
+    this.#setDatepickerStart();
+    this.#setDatepickerEnd();
+  }
+
+  #setDatepickerStart() {
+    this.#datepickerStart = flatpickr(
+      this.element.querySelector('[name="event-start-time"'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: this._state.point.dateFrom,
+        onChange: this.#dateStartChangeHandler,
+        maxDate: this._state.point.dateFrom
+      }
+    );
+  }
+
+  #setDatepickerEnd() {
+    this.#datepickerEnd = flatpickr(
+      this.element.querySelector('[name="event-end-time"'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: this._state.point.dateTo,
+        onChange: this.#dateEndChangeHandler,
+        minDate: this._state.point.dateTo
+      }
+    );
   }
 
   #rollupClickHandler = (evt) => {
@@ -92,5 +128,21 @@ export default class FormEditPoint extends AbstractStatefulView {
     this.updateElement({
       currentDestination: { ...this._state.currentDestination, ...newDestinationPoint }
     });
+  };
+
+  #dateStartChangeHandler = ([date]) => {
+    this.updateElement({
+      point: { ...this._state.point, dateFrom: date }
+    });
+
+    this.#datepickerEnd.set('minDate', date);
+  };
+
+  #dateEndChangeHandler = ([date]) => {
+    this.updateElement({
+      point: { ...this._state.point, dateTo: date }
+    });
+
+    this.#datepickerStart.set('maxDate', date);
   };
 }
