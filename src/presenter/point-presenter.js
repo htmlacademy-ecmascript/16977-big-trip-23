@@ -3,7 +3,7 @@ import { Mode } from '../constants.js';
 import { updateItem } from '../util/common.js';
 import FormEditPoint from '../view/form-point/form-edit-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
-import TripListItem from '../view/trip-list-item.js';
+
 
 export default class PointPresenter {
   #tripEventsList = null;
@@ -41,30 +41,22 @@ export default class PointPresenter {
     const currentDestination = this.#destinationsModel.getDestinationByID(this.point);
     const currentOffers = this.#offersModel.getOffersCurrentPoint(this.point);
 
-    this.tripEventPoint = new TripEventPoint({
+    this.#tripListPoint = new TripEventPoint({
       point: this.point,
       currentDestination: currentDestination,
       currentOffers: currentOffers,
+      onRollupClick: () => this.#handleShowEditPoint(),
+      onFavoriteClick: () => this.#handleSwitchFavorite(),
     });
 
-    this.formEditPoint = new FormEditPoint({
+    this.#tripFormEditPoint = new FormEditPoint({
       point: this.point,
       currentDestination: currentDestination,
       currentOffers: currentOffers,
       mainOffers: this.#mainOffers,
       mainDestinations: this.#mainDestinations,
-    });
-
-    this.#tripListPoint = new TripListItem({
-      data: this.tripEventPoint.template,
-      onRollupClick: () => this.#handleShowEditPoint(),
-      onFavoriteClick: () => this.#handleSwitchFavorite(),
-    });
-
-    this.#tripFormEditPoint = new TripListItem({
-      data: this.formEditPoint.template,
       onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: () => this.#handleHideEditPoint()
+      onFormSubmit: () => this.#handleSubmitFormEditPoint(),
     });
 
     if (prevTripEventPoint === null || prevFormEditPoint === null) {
@@ -92,6 +84,17 @@ export default class PointPresenter {
     remove(this.#tripFormEditPoint);
   }
 
+  #resetFormEditPoint() {
+    const currentDestination = this.#destinationsModel.getDestinationByID(this.point);
+    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.point);
+
+    this.#tripFormEditPoint.reset({
+      point: this.point,
+      currentDestination: currentDestination,
+      currentOffers: currentOffers,
+    });
+  }
+
   #replacePointInsteadForm() {
     replace(this.#tripListPoint, this.#tripFormEditPoint);
   }
@@ -103,6 +106,9 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+
+      this.#resetFormEditPoint();
+
       this.#replacePointInsteadForm();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
 
@@ -119,6 +125,8 @@ export default class PointPresenter {
   };
 
   #handleHideEditPoint = () => {
+    this.#resetFormEditPoint();
+
     this.#replacePointInsteadForm();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
 
@@ -129,5 +137,12 @@ export default class PointPresenter {
     const updatePoint = updateItem(this.point, { isFavorite: !this.point.isFavorite });
 
     this.#handleTripEventPointUpdate(updatePoint);
+  };
+
+  #handleSubmitFormEditPoint = () => {
+    this.#replacePointInsteadForm();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+
+    this.#mode = Mode.DEFAULT;
   };
 }

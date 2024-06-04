@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import DateBuilder from '../util/date-builder.js';
+import TripListItem from './trip-list-item.js';
 
 const createEventOfferTemplate = (offer) => `
   <li class="event__offer">
@@ -62,14 +63,43 @@ export default class TripEventPoint extends AbstractView {
   #currentDestination = [];
   #currentOffers = [];
 
-  constructor({ point, currentDestination, currentOffers }) {
+  #rollupButton = null;
+  #favoriteButton = null;
+
+  #handleRollupClick = null;
+  #handleSwitchFavorite = null;
+
+  constructor({ point, currentDestination, currentOffers, onRollupClick, onFavoriteClick }) {
     super();
     this.#point = point;
     this.#currentDestination = currentDestination;
     this.#currentOffers = currentOffers;
+
+    this.#handleRollupClick = onRollupClick;
+    this.#handleSwitchFavorite = onFavoriteClick;
+
+    this.#rollupButton = this.element.querySelector('.event__rollup-btn');
+    this.#favoriteButton = this.element.querySelector('.event__favorite-btn');
+
+    this.#rollupButton.addEventListener('click', this.#rollupClickHandler);
+
+    this.#favoriteButton.addEventListener('click', this.#switchFavoriteHandler);
   }
 
   get template() {
-    return createTripEventPointTemplate({ point: this.#point, currentDestination: this.#currentDestination, currentOffers: this.#currentOffers });
+    const tripEventPointTemplate = createTripEventPointTemplate({ point: this.#point, currentDestination: this.#currentDestination, currentOffers: this.#currentOffers });
+
+    return new TripListItem({ data: tripEventPointTemplate }).template;
   }
+
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
+  };
+
+  #switchFavoriteHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSwitchFavorite();
+  };
 }
