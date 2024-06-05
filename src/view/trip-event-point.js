@@ -92,7 +92,6 @@ export default class TripEventPoint extends AbstractView {
     return new TripListItem({ data: tripEventPointTemplate }).template;
   }
 
-
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleRollupClick();
