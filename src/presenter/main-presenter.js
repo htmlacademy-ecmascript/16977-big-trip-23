@@ -119,11 +119,6 @@ export default class MainPresenter {
     });
   }
 
-  #handleDataChange = (updateItem) => {
-    this.mainPoints = updateData(this.mainPoints, updateItem);
-    this.#pointPresenters.get(updateItem.id).init(updateItem);
-  };
-
   #resetAllEditForms = () => {
     this.#pointPresenters.forEach((presenter) => presenter.reset());
   };
@@ -137,6 +132,11 @@ export default class MainPresenter {
     this.#renderTripFilters();
     this.#renderEventAddButton();
   }
+
+  #handleDataChange = (updateItem) => {
+    this.mainPoints = updateData(this.mainPoints, updateItem);
+    this.#pointPresenters.get(updateItem.id).init(updateItem);
+  };
 
   #handleTripSortChange = (type) => {
     switch (type) {
