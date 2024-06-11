@@ -1,11 +1,11 @@
 import { render, replace, remove } from '../framework/render.js';
-import { Mode } from '../constants.js';
-import { updateItem } from '../util/common.js';
+import { Mode, UpdateType, UserAction } from '../constants.js';
+import DateBuilder from '../util/date-builder.js';
 import FormEditPoint from '../view/form-point/form-edit-point.js';
 import TripEventPoint from '../view/trip-event-point.js';
 
-
 export default class PointPresenter {
+  #point = null;
   #tripEventsList = null;
 
   #destinationsModel = null;
@@ -33,16 +33,16 @@ export default class PointPresenter {
   }
 
   init(point) {
-    this.point = point;
+    this.#point = point;
 
     const prevTripEventPoint = this.#tripListPoint;
     const prevFormEditPoint = this.#tripFormEditPoint;
 
-    const currentDestination = this.#destinationsModel.getDestinationByID(this.point);
-    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.point);
+    const currentDestination = this.#destinationsModel.getDestinationByID(this.#point);
+    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.#point);
 
     this.#tripListPoint = new TripEventPoint({
-      point: this.point,
+      point: this.#point,
       currentDestination: currentDestination,
       currentOffers: currentOffers,
       onRollupClick: () => this.#handleShowEditPoint(),
@@ -50,13 +50,14 @@ export default class PointPresenter {
     });
 
     this.#tripFormEditPoint = new FormEditPoint({
-      point: this.point,
+      point: this.#point,
       currentDestination: currentDestination,
       currentOffers: currentOffers,
       mainOffers: this.#mainOffers,
       mainDestinations: this.#mainDestinations,
       onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: () => this.#handleSubmitFormEditPoint(),
+      onFormSubmit: this.#handleSubmitFormEditPoint,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevTripEventPoint === null || prevFormEditPoint === null) {
@@ -85,11 +86,11 @@ export default class PointPresenter {
   }
 
   #resetFormEditPoint() {
-    const currentDestination = this.#destinationsModel.getDestinationByID(this.point);
-    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.point);
+    const currentDestination = this.#destinationsModel.getDestinationByID(this.#point);
+    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.#point);
 
     this.#tripFormEditPoint.reset({
-      point: this.point,
+      point: this.#point,
       currentDestination: currentDestination,
       currentOffers: currentOffers,
     });
@@ -134,15 +135,34 @@ export default class PointPresenter {
   };
 
   #handleSwitchFavorite = () => {
-    const updatePoint = updateItem(this.point, { isFavorite: !this.point.isFavorite });
-
-    this.#handleTripEventPointUpdate(updatePoint);
+    this.#handleTripEventPointUpdate(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      { ...this.#point, ...{ isFavorite: !this.#point.isFavorite } }
+    );
   };
 
-  #handleSubmitFormEditPoint = () => {
+  #handleSubmitFormEditPoint = (update) => {
+    const isDateEqual = DateBuilder.isDateEqual(this.#point.dateFrom, update.dateFrom) && DateBuilder.isDateEqual(this.#point.dateTo, update.dateTo);
+    const isOldPrice = this.#point.basePrice === update.basePrice;
+    const isPatchUpdate = isDateEqual && isOldPrice;
+
+    this.#handleTripEventPointUpdate(
+      UserAction.UPDATE_POINT,
+      isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR,
+      update,
+    );
     this.#replacePointInsteadForm();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
 
     this.#mode = Mode.DEFAULT;
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleTripEventPointUpdate(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
   };
 }

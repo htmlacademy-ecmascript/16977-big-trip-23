@@ -1,3 +1,4 @@
+import he from 'he';
 import DateBuilder from './date-builder.js';
 
 const createTravelTypeTemplate = ({ type, currentType }) => `
@@ -15,7 +16,7 @@ const createTravelOffersTemplate = ({ type, offer, currentOffers }) => {
 
   return (`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isCheckedOffer ? 'checked' : ''}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" data-hash="${id}" type="checkbox" name="event-offer-${type}" ${isCheckedOffer ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${id}">
         <span class="event__offer-title">${title}</span>
         +€&nbsp;
@@ -98,7 +99,7 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${mainDestinations.map((destination) => createTravelCitiesTemplate(destination.name)).join('')}
           </datalist>
