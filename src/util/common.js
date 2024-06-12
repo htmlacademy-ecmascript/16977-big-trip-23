@@ -1,5 +1,9 @@
-const updateItem = (item, prop) => ({ ...item, ...prop });
+const showMistakeStateField = (element) => {
+  element.classList.add('state-mistake-field');
 
-const updateData = (data, update) => data.map((item) => item.id === update.id ? update : item);
+  setTimeout(() => {
+    element.classList.remove('state-mistake-field');
+  }, 1000);
+};
 
-export { updateItem, updateData };
+export { showMistakeStateField };

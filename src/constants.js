@@ -1,9 +1,8 @@
-const TravelSortItems = {
+const TravelSortItem = {
   DAY: {
     fieldName: 'day',
     fieldTitle: 'Day',
     fieldStatus: 'on',
-    checked: true,
   },
   EVENT: {
     fieldName: 'event',
@@ -37,4 +36,30 @@ const Mode = {
   EDIT: 'EDIT',
 };
 
-export { TravelSortItems, TimeInMillisecond, Mode };
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+
+const FiltersType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
+const FilterMessage = {
+  [FiltersType.EVERYTHING]: 'Click New Event to create your first point',
+  [FiltersType.FUTURE]: 'There are no future events now',
+  [FiltersType.PRESENT]: 'There are no present events now',
+  [FiltersType.PAST]: 'There are no past events now'
+};
+
+export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage };

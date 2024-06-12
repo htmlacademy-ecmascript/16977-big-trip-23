@@ -1,10 +1,16 @@
-import AbstractView from '../../framework/view/abstract-view.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
+import { showMistakeStateField } from '../../util/common.js';
 import FormBuilder from '../../util/form-builder.js';
+import TripListItem from '../trip-list-item.js';
+
 
 const DEFAULT_TRAVEL = {
-  'basePrice': '',
-  'dateFrom': '2019-07-10T22:55:56.845Z',
-  'dateTo': '2019-07-11T11:22:13.375Z',
+  'id': '',
+  'basePrice': '0',
+  'dateFrom': null,
+  'dateTo': null,
   'destination': {
     'id': '',
     'description': '',
@@ -13,32 +19,259 @@ const DEFAULT_TRAVEL = {
   },
   'isFavorite': false,
   'offers': [],
-  'type': 'taxi'
+  'type': 'flight'
 };
 
-export default class FormAddNewPoint extends AbstractView {
-  #point = [];
-  #currentDestination = [];
-  #currentOffers = [];
+export default class FormAddNewPoint extends AbstractStatefulView {
   #mainOffers = [];
   #mainDestinations = [];
 
-  constructor({ mainOffers, mainDestinations }) {
+  #rollupButton = null;
+  #formEventEdit = null;
+  #formDeleteButton = null;
+  #eventTypeGroup = null;
+  #eventInputDestination = null;
+  #eventInputPrice = null;
+  #offersInput = null;
+
+  #handleRollupClick = null;
+  #handleFormSubmit = null;
+  #handleDeleteClick = null;
+
+  #datepickerStart = null;
+  #datepickerEnd = null;
+
+  constructor({ mainOffers, mainDestinations, onRollupClick, onFormSubmit, onDeleteClick }) {
     super();
-    this.#point = DEFAULT_TRAVEL;
-    this.#currentDestination = DEFAULT_TRAVEL.destination;
-    this.#currentOffers = DEFAULT_TRAVEL.offers;
     this.#mainOffers = mainOffers;
     this.#mainDestinations = mainDestinations;
+
+    this._setState({
+      point: { ...DEFAULT_TRAVEL, destination: DEFAULT_TRAVEL.destination, offers: DEFAULT_TRAVEL.offers }
+    });
+
+    this.#handleRollupClick = onRollupClick;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
+
+    this._restoreHandlers();
+  }
+
+  reset({ point, currentDestination, currentOffers }) {
+    this.updateElement(
+      { point: { ...point, destination: currentDestination, offers: currentOffers } }
+    );
+  }
+
+  _restoreHandlers() {
+    this.#rollupButton = this.element.querySelector('.event__rollup-btn');
+    this.#formEventEdit = this.element.querySelector('.event--edit');
+    this.#formDeleteButton = this.element.querySelector('.event__reset-btn');
+    this.#eventTypeGroup = this.element.querySelector('.event__type-group');
+    this.#eventInputDestination = this.element.querySelector('.event__input--destination');
+    this.#eventInputPrice = this.element.querySelector('.event__input--price');
+    this.#offersInput = this.element.querySelectorAll('.event__offer-checkbox');
+
+    this.#rollupButton.addEventListener('click', this.#rollupButtonClickHandler);
+    this.#formEventEdit.addEventListener('submit', this.#formSubmitHandler);
+    this.#formDeleteButton.addEventListener('click', this.#deleteButtonClickHandler);
+
+    this.#eventTypeGroup.addEventListener('change', this.#eventTypeGroupChangeHandler);
+    this.#eventInputDestination.addEventListener('change', this.#eventFieldDestinationChangeHandler);
+    this.#eventInputPrice.addEventListener('change', this.#eventFieldPriceChangeHandler);
+
+    for (const offerInput of this.#offersInput) {
+      offerInput.addEventListener('change', this.#offersChangeHandler);
+    }
+
+    this.#setDatepickerStart();
+    this.#setDatepickerEnd();
   }
 
   get template() {
-    return new FormBuilder({
-      point: this.#point,
-      currentDestination: this.#currentDestination,
-      currentOffers: this.#currentOffers,
+    const formAddNewPointComponent = new FormBuilder({
+      point: this._state.point,
+      currentDestination: this._state.point.destination,
+      currentOffers: this._state.point.offers,
       mainOffers: this.#mainOffers,
       mainDestinations: this.#mainDestinations
     }).getFormPointTemplate();
+
+    return new TripListItem({ data: formAddNewPointComponent }).template;
   }
+
+  #stateToPoint(state) {
+    return {
+      ...state.point,
+      destination: state.point.destination.id,
+      offers: this._state.point.offers.map((offer) => offer.id)
+    };
+  }
+
+  #getUpdatedState(update) {
+    return {
+      point: { ...this._state.point, ...update }
+    };
+  }
+
+  #setDatepickerStart() {
+    this.#datepickerStart = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: this._state.point.dateFrom,
+        onChange: this.#dateStartChangeHandler,
+        maxDate: this._state.point.dateTo
+      }
+    );
+  }
+
+  #setDatepickerEnd() {
+    this.#datepickerEnd = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: this._state.point.dateTo,
+        onChange: this.#dateEndChangeHandler,
+        minDate: this._state.point.dateFrom
+      }
+    );
+  }
+
+  #rollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#handleRollupClick();
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+
+    const currentStateDestinationName = this._state.point.destination.name;
+    const currentStateDateFrom = this._state.point.dateFrom;
+    const currentStateDateTo = this._state.point.dateTo;
+
+    if (currentStateDestinationName.length === 0) {
+      showMistakeStateField(this.#eventInputDestination);
+
+      return;
+    }
+
+    if (currentStateDateFrom === null) {
+      showMistakeStateField(this.element.querySelector('[name="event-start-time"]'));
+
+      return;
+    }
+
+    if (currentStateDateTo === null) {
+      showMistakeStateField(this.element.querySelector('[name="event-end-time"]'));
+
+      return;
+    }
+
+    this.updateElement(
+      this.#getUpdatedState({ id: crypto.randomUUID() })
+    );
+
+    this.#handleFormSubmit(this.#stateToPoint(this._state));
+  };
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#handleDeleteClick(this.#stateToPoint(this._state));
+  };
+
+  #eventTypeGroupChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    const newTypePoint = evt.target.value;
+
+    this.updateElement(
+      this.#getUpdatedState({ offers: [], type: newTypePoint })
+    );
+  };
+
+  #eventFieldDestinationChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    const newCityDestinationPoint = evt.target.value;
+    const newDestinationPoint = this.#mainDestinations.find((item) => item.name === newCityDestinationPoint);
+
+    if (newDestinationPoint === undefined) {
+      showMistakeStateField(this.#eventInputDestination);
+
+      return;
+    }
+
+    this.updateElement(
+      this.#getUpdatedState({ destination: newDestinationPoint, offers: this._state.point.offers })
+    );
+  };
+
+  #eventFieldPriceChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    const price = evt.target.value;
+    const isValidPrice = /^[1-9]\d*$/.test(price);
+
+    if (isValidPrice) {
+      this.updateElement(
+        this.#getUpdatedState({ basePrice: Number(price) })
+      );
+    } else {
+      this.updateElement(
+        this.#getUpdatedState({ basePrice: 0 })
+      );
+    }
+  };
+
+  #offersChangeHandler = (evt) => {
+    const target = evt.target;
+    const hash = target.dataset.hash;
+
+    if (target.checked) {
+      const currentTypeOffers = this.#mainOffers.find((mainOffer) => mainOffer.type === this._state.point.type).offers;
+      const newOfferIndex = currentTypeOffers.findIndex((offer) => offer.id === hash);
+
+      this.updateElement(
+        this.#getUpdatedState(
+          {
+            offers: [
+              ...this._state.point.offers,
+              currentTypeOffers[newOfferIndex],
+            ]
+          }
+        )
+      );
+    } else {
+      const currentPointOffers = this._state.point.offers.filter((offer) => offer.id !== hash);
+
+      this.updateElement(
+        this.#getUpdatedState(
+          { offers: currentPointOffers }
+        )
+      );
+    }
+  };
+
+  #dateStartChangeHandler = ([date]) => {
+    this.updateElement(
+      this.#getUpdatedState({ dateFrom: date })
+    );
+
+    this.#datepickerEnd.set('minDate', date);
+  };
+
+  #dateEndChangeHandler = ([date]) => {
+    this.updateElement(
+      this.#getUpdatedState({ dateTo: date })
+    );
+
+    this.#datepickerStart.set('maxDate', date);
+  };
 }

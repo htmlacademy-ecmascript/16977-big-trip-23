@@ -13,7 +13,7 @@ export default class DateBuilder {
   }
 
   getTime() {
-    return dayjs(this.#date).format('HH:ss');
+    return dayjs(this.#date).format('HH:mm');
   }
 
   getMonthAndDay() {
@@ -29,7 +29,11 @@ export default class DateBuilder {
   }
 
   getFullDateAndTimeCalendarFormat() {
-    return dayjs(this.#date).format('DD/MM/YY HH:ss');
+    if (this.#date === null) {
+      return '';
+    }
+
+    return dayjs(this.#date).format('DD/MM/YY HH:mm');
   }
 
   getDifferenceTime() {
@@ -49,5 +53,9 @@ export default class DateBuilder {
 
   getDurationTime() {
     return dayjs(this.#dateTo).diff(dayjs(this.#dateFrom));
+  }
+
+  static isDateEqual(firstDate, secondDate) {
+    return (firstDate === null && secondDate === null) ?? dayjs(firstDate).isSame(secondDate, 'D');
   }
 }
