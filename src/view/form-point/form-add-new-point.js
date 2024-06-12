@@ -90,6 +90,9 @@ export default class FormAddNewPoint extends AbstractStatefulView {
 
   get template() {
     const formAddNewPointComponent = new FormBuilder({
+      settingsForm: {
+        resetButtonName: 'Cancel',
+      },
       point: this._state.point,
       currentDestination: this._state.point.destination,
       currentOffers: this._state.point.offers,
