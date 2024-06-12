@@ -30,6 +30,7 @@ export default class FiltersPresenter {
     this.#tripFiltersElement = this.#pageHeaderElement.querySelector('.trip-controls__filters');
 
     this.#tripFiltersComponent = new TripFilters({
+      points: this.#pointsModel.points,
       currentFilter: this.#currentFilter,
       onFilterTypeChange: this.#handleFilterTypeChange
     });

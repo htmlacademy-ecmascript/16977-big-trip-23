@@ -24,6 +24,15 @@ export class FiltersBuilder {
     return this.#data.filter((item) => dayjs(item.dateFrom) < dayjs(new Date()));
   }
 
+  getFilteredCollections() {
+    return {
+      [FiltersType.EVERYTHING]: this.getEverythingPoints(),
+      [FiltersType.FUTURE]: this.getFuturePoints(),
+      [FiltersType.PRESENT]: this.getPresentPoints(),
+      [FiltersType.PAST]: this.getPastPoints()
+    };
+  }
+
   getFilteredPoints(filter) {
     switch (filter) {
       case FiltersType.EVERYTHING:

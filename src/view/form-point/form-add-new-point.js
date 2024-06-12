@@ -72,16 +72,16 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     this.#eventInputPrice = this.element.querySelector('.event__input--price');
     this.#offersInput = this.element.querySelectorAll('.event__offer-checkbox');
 
-    this.#rollupButton.addEventListener('click', this.#rollupClickHandler);
+    this.#rollupButton.addEventListener('click', this.#rollupButtonClickHandler);
     this.#formEventEdit.addEventListener('submit', this.#formSubmitHandler);
-    this.#formDeleteButton.addEventListener('click', this.#deleteClickHandler);
+    this.#formDeleteButton.addEventListener('click', this.#deleteButtonClickHandler);
 
-    this.#eventTypeGroup.addEventListener('change', this.#eventTypeGroupHandler);
-    this.#eventInputDestination.addEventListener('change', this.#eventInputDestinationHandler);
-    this.#eventInputPrice.addEventListener('change', this.#eventInputPriceHandler);
+    this.#eventTypeGroup.addEventListener('change', this.#eventTypeGroupChangeHandler);
+    this.#eventInputDestination.addEventListener('change', this.#eventFieldDestinationChangeHandler);
+    this.#eventInputPrice.addEventListener('change', this.#eventFieldPriceChangeHandler);
 
     for (const offerInput of this.#offersInput) {
-      offerInput.addEventListener('click', this.#offersInputHandler);
+      offerInput.addEventListener('change', this.#offersChangeHandler);
     }
 
     this.#setDatepickerStart();
@@ -142,7 +142,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     );
   }
 
-  #rollupClickHandler = (evt) => {
+  #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
 
     this.#handleRollupClick();
@@ -180,13 +180,13 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     this.#handleFormSubmit(this.#stateToPoint(this._state));
   };
 
-  #deleteClickHandler = (evt) => {
+  #deleteButtonClickHandler = (evt) => {
     evt.preventDefault();
 
     this.#handleDeleteClick(this.#stateToPoint(this._state));
   };
 
-  #eventTypeGroupHandler = (evt) => {
+  #eventTypeGroupChangeHandler = (evt) => {
     evt.preventDefault();
 
     const newTypePoint = evt.target.value;
@@ -196,7 +196,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     );
   };
 
-  #eventInputDestinationHandler = (evt) => {
+  #eventFieldDestinationChangeHandler = (evt) => {
     evt.preventDefault();
 
     const newCityDestinationPoint = evt.target.value;
@@ -213,7 +213,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     );
   };
 
-  #eventInputPriceHandler = (evt) => {
+  #eventFieldPriceChangeHandler = (evt) => {
     evt.preventDefault();
 
     const price = evt.target.value;
@@ -230,7 +230,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     }
   };
 
-  #offersInputHandler = (evt) => {
+  #offersChangeHandler = (evt) => {
     const target = evt.target;
     const hash = target.dataset.hash;
 

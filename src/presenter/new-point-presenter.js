@@ -30,13 +30,7 @@ export default class NewPointPresenter {
   }
 
   init() {
-    this.#formAddNewPointComponent = new FormAddNewPoint({
-      mainOffers: this.#offersModel.offers,
-      mainDestinations: this.#destinationsModel.destinations,
-      onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: this.#handleSubmitFormEditPoint,
-      onDeleteClick: this.#handleDeleteClick,
-    });
+    this.#initAddNewPointComponent();
 
     render(this.#eventAddButtonComponent, this.#tripMainElement);
   }
