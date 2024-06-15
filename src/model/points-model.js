@@ -81,7 +81,7 @@ export default class PointsModel extends Observable {
     }
 
     try {
-      await this.#service.deletePoint(update)
+      await this.#service.deletePoint(update);
 
       this.#points = [
         ...this.#points.slice(0, index),

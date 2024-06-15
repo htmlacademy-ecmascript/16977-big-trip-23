@@ -222,8 +222,6 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     const price = evt.target.value;
     const isValidPrice = /^[1-9]\d*$/.test(price);
 
-    console.log(price);
-
     if (isValidPrice) {
       this.updateElement(
         this.#getUpdatedState({ basePrice: Number(price) })

@@ -43,7 +43,6 @@ export default class PointsApiService extends ApiService {
   }
 
   async updatePoint(point) {
-    console.log(point);
     const adaptedPointToServer = AdapterBuilder.adaptPointToServer(point);
 
     const response = await this._load({

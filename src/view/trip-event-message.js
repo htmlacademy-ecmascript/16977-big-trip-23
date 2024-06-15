@@ -10,6 +10,7 @@ export default class TripEventMessage extends AbstractView {
 
     this.#message = message;
   }
+
   get template() {
     return createTripEventMessageTemplate({ message: this.#message });
   }
