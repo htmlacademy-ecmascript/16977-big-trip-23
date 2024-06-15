@@ -77,4 +77,6 @@ const TimeLimitUiBlockAnimation = {
   UPPER: 1000
 };
 
-export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage, TimeLimitUiBlockAnimation };
+const MAX_VISIBLE_CITIES = 3;
+
+export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage, TimeLimitUiBlockAnimation, MAX_VISIBLE_CITIES };

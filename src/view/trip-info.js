@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import DateBuilder from '../util/date-builder.js';
+import { MAX_VISIBLE_CITIES } from '../constants.js';
 
 const createInfoTitleTemplate = (points, destinationsModel) => {
   const pointsDestination = points.map((point) => destinationsModel.getDestinationByID(point));
@@ -7,8 +8,11 @@ const createInfoTitleTemplate = (points, destinationsModel) => {
 
   let cities = '';
 
-  if (cityCollection.length >= 3) {
-    cities = `${cityCollection[0]} &mdash; ... &mdash; ${cityCollection[cityCollection.length - 1]}`;
+  if (cityCollection.length >= MAX_VISIBLE_CITIES) {
+    const firstCity = cityCollection[0];
+    const lastCity = cityCollection[cityCollection.length - 1];
+
+    cities = `${firstCity} &mdash; ... &mdash; ${lastCity}`;
   } else {
     cities = cityCollection.join(' &mdash; ');
   }
