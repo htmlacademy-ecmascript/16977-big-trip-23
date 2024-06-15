@@ -65,11 +65,16 @@ const FilterMessage = {
 
 const AUTHORIZATION = 'Basic ladnoitaksoidet';
 
-const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
+const END_POINT = 'https://23.objects.htmlacademy.2pro/big-trip';
 
 const EventMessage = {
   FAILED_LOAD_DATA: 'Failed to load latest route information',
   LOADING: 'Loading...'
 };
 
-export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage };
+const TimeLimitUiBlockAnimation = {
+  LOWER: 350,
+  UPPER: 1000
+};
+
+export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage, TimeLimitUiBlockAnimation };

@@ -1,8 +1,10 @@
 import { remove, render } from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
 import { SortBuilder } from '../util/sort-builder.js';
 import { FiltersBuilder } from '../util/filters-builder.js';
 
-import { TravelSortItem, UserAction, UpdateType, FilterMessage, EventMessage } from '../constants.js';
+import { TravelSortItem, UserAction, UpdateType, FilterMessage, EventMessage, TimeLimitUiBlockAnimation } from '../constants.js';
 
 import TripEventTripEventMessage from '../view/trip-event-message.js';
 import TripSort from '../view/trip-sort.js';
@@ -13,9 +15,9 @@ import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 
 export default class MainPresenter {
-  #pointsModel = [];
-  #destinationsModel = [];
-  #offersModel = [];
+  #pointsModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
   #filtersModel = null;
 
   #newPointPresenter = null;
@@ -36,6 +38,10 @@ export default class MainPresenter {
   #tripEventsElement = null;
 
   #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimitL: TimeLimitUiBlockAnimation.LOWER,
+    upperLimitL: TimeLimitUiBlockAnimation.UPPER
+  });
 
   constructor({ pointsModel, destinationsModel, offersModel, filtersModel }) {
     this.#pointsModel = pointsModel;
@@ -47,7 +53,6 @@ export default class MainPresenter {
     this.#tripEventsElement = this.#pageMainElement.querySelector('.trip-events');
 
     this.#newPointPresenter = new NewPointPresenter({
-      points: this.points,
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
       filtersModel: this.#filtersModel,
@@ -149,6 +154,12 @@ export default class MainPresenter {
     render(this.#tripEventMessageComponent, this.#tripEventsElement);
   }
 
+  #renderFailedLoadData() {
+    this.#tripEventMessageComponent = new TripEventTripEventMessage({ message: EventMessage.FAILED_LOAD_DATA });
+
+    render(this.#tripEventMessageComponent, this.#tripEventsElement);
+  }
+
   #resetAllEditForms = () => {
     this.#pointPresenters.forEach((presenter) => presenter.reset());
     this.#newPointPresenter.destroy();
@@ -209,18 +220,39 @@ export default class MainPresenter {
     this.#renderBoard();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
-        break;
+        this.#pointPresenters.get(update.id).setDeleting();
+
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -238,7 +270,12 @@ export default class MainPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
-        // remove(this.#tripEventMessageComponent);
+        remove(this.#tripEventMessageComponent);
+
+        if (data.isError) {
+          this.#renderFailedLoadData();
+          return;
+        }
 
         this.#renderBoard();
         break;

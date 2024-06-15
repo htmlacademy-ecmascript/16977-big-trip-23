@@ -1,22 +1,22 @@
 import he from 'he';
 import DateBuilder from './date-builder.js';
 
-const createTravelTypeTemplate = ({ type, currentType }) => `
+const createTravelTypeTemplate = ({ type, currentType, isDisabled }) => `
   <div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''}>
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
     <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
   </div>`;
 
 const createTravelCitiesTemplate = (city) => `<option value="${city}"></option>`;
 
-const createTravelOffersTemplate = ({ type, offer, currentOffers }) => {
+const createTravelOffersTemplate = ({ type, offer, currentOffers, isDisabled }) => {
   const { id, title, price } = offer;
 
   const isCheckedOffer = currentOffers.find((currentOffer) => id === currentOffer.id);
 
   return (`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" data-hash="${id}" type="checkbox" name="event-offer-${type}" ${isCheckedOffer ? 'checked' : ''}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" data-hash="${id}" type="checkbox" name="event-offer-${type}" ${isCheckedOffer ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${id}">
         <span class="event__offer-title">${title}</span>
         +€&nbsp;
@@ -25,7 +25,7 @@ const createTravelOffersTemplate = ({ type, offer, currentOffers }) => {
     </div>`);
 };
 
-const createOffersSectionTemplate = ({ offersByTypeList, type, currentOffers }) => {
+const createOffersSectionTemplate = ({ offersByTypeList, type, currentOffers, isDisabled }) => {
   if (!offersByTypeList.length) {
     return '';
   }
@@ -35,7 +35,7 @@ const createOffersSectionTemplate = ({ offersByTypeList, type, currentOffers }) 
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
       <div class="event__available-offers">
-        ${offersByTypeList.map((offer) => createTravelOffersTemplate({ type, offer, currentOffers })).join('')}
+        ${offersByTypeList.map((offer) => createTravelOffersTemplate({ type, offer, currentOffers, isDisabled })).join('')}
       </div>
     </section>`);
 };
@@ -68,7 +68,8 @@ const createDestinationSectionTemplate = (destination) => {
 };
 
 const createFormPointTemplate = ({ settingsForm, point, currentDestination, currentOffers, mainOffers, mainDestinations }) => {
-  const { basePrice, dateFrom, dateTo, type } = point;
+  const { basePrice, dateFrom, dateTo, type, isDisabled, isSaving, isDelete } = point;
+
   const { name } = currentDestination;
 
   const fullStartDateAndTime = new DateBuilder({ date: dateFrom }).getFullDateAndTimeCalendarFormat();
@@ -92,7 +93,7 @@ const createFormPointTemplate = ({ settingsForm, point, currentDestination, curr
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
-              ${mainOffers.map((offer) => createTravelTypeTemplate({ type: offer.type, currentType: point.type })).join('')}
+              ${mainOffers.map((offer) => createTravelTypeTemplate({ type: offer.type, currentType: point.type, isDisabled })).join('')}
             </fieldset>
           </div>
         </div>
@@ -101,7 +102,7 @@ const createFormPointTemplate = ({ settingsForm, point, currentDestination, curr
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1"  ${isDisabled ? 'disabled' : ''} type="text" name="event-destination" required value="${he.encode(name)}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${mainDestinations.map((destination) => createTravelCitiesTemplate(destination.name)).join('')}
           </datalist>
@@ -109,10 +110,10 @@ const createFormPointTemplate = ({ settingsForm, point, currentDestination, curr
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${fullStartDateAndTime}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" ${isDisabled ? 'disabled' : ''} required name="event-start-time" value="${fullStartDateAndTime}">
           —
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${fullEndDateAndTime}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" ${isDisabled ? 'disabled' : ''}  name="event-end-time" value="${fullEndDateAndTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -120,17 +121,17 @@ const createFormPointTemplate = ({ settingsForm, point, currentDestination, curr
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" required name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number"  ${isDisabled ? 'disabled' : ''} required min="1" name="event-price" value="${basePrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${resetButtonName}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${resetButtonName !== 'Cancel' && isDisabled ? 'disabled' : ''}>${isDelete ? 'Deleting...' : resetButtonName}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
       </header>
       <section class="event__details">
-        ${createOffersSectionTemplate({ offersByTypeList: offersByType.offers, type, currentOffers })}
+        ${createOffersSectionTemplate({ offersByTypeList: offersByType.offers, type, currentOffers, isDisabled })}
 
         ${createDestinationSectionTemplate(currentDestination)}
       </section>
@@ -147,7 +148,6 @@ export default class FormBuilder {
 
   constructor({ settingsForm, point, currentDestination, currentOffers, mainOffers, mainDestinations }) {
     this.#settingsForm = settingsForm;
-
     this.#point = point;
     this.#currentDestination = currentDestination;
     this.#currentOffers = currentOffers;

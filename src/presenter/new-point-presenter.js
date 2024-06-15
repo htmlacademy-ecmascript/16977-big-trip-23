@@ -4,7 +4,6 @@ import EventAddButton from '../view/event-add-button.js';
 import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 
 export default class NewPointPresenter {
-  #points = [];
   #offersModel = [];
   #destinationsModel = null;
   #filtersModel = null;
@@ -16,8 +15,7 @@ export default class NewPointPresenter {
   #eventAddButtonComponent = null;
   #formAddNewPointComponent = null;
 
-  constructor({ points, offersModel, destinationsModel, filtersModel, onTripEventPointUpdate }) {
-    this.#points = points;
+  constructor({ offersModel, destinationsModel, filtersModel, onTripEventPointUpdate }) {
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filtersModel = filtersModel;
@@ -52,6 +50,31 @@ export default class NewPointPresenter {
 
   enabledButton() {
     this.#eventAddButtonComponent.element.removeAttribute('disabled');
+  }
+
+  setSaving() {
+    this.#formAddNewPointComponent.updateElement({
+      point: {
+        ...this.#formAddNewPointComponent._state.point,
+        isDisabled: true,
+        isSaving: true,
+      }
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#formAddNewPointComponent.updateElement({
+        point: {
+          ...this.#formAddNewPointComponent._state.point,
+          isSaving: false,
+          isDisabled: false,
+          isDelete: false
+        }
+      });
+    };
+
+    this.#formAddNewPointComponent.shake(resetFormState);
   }
 
   #initAddNewPointComponent() {

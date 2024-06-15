@@ -7,7 +7,6 @@ import TripListItem from '../trip-list-item.js';
 
 
 const DEFAULT_TRAVEL = {
-  'id': '',
   'basePrice': '0',
   'dateFrom': null,
   'dateTo': null,
@@ -47,7 +46,11 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     this.#mainDestinations = mainDestinations;
 
     this._setState({
-      point: { ...DEFAULT_TRAVEL, destination: DEFAULT_TRAVEL.destination, offers: DEFAULT_TRAVEL.offers }
+      point: {
+        ...DEFAULT_TRAVEL,
+        destination: DEFAULT_TRAVEL.destination,
+        offers: DEFAULT_TRAVEL.offers
+      }
     });
 
     this.#handleRollupClick = onRollupClick;
@@ -104,17 +107,29 @@ export default class FormAddNewPoint extends AbstractStatefulView {
   }
 
   #stateToPoint(state) {
-    return {
+    const point = {
       ...state.point,
       destination: state.point.destination.id,
       offers: this._state.point.offers.map((offer) => offer.id)
     };
+
+    delete point.isDisabled;
+    delete point.isSaving;
+
+    return point;
   }
 
   #getUpdatedState(update) {
-    return {
-      point: { ...this._state.point, ...update }
-    };
+    this._setState({
+      point: {
+        ...this._state.point,
+        ...update,
+        isDisabled: false,
+        isSaving: false,
+      }
+    });
+
+    return this._state;
   }
 
   #setDatepickerStart() {
@@ -175,10 +190,6 @@ export default class FormAddNewPoint extends AbstractStatefulView {
 
       return;
     }
-
-    this.updateElement(
-      this.#getUpdatedState({ id: crypto.randomUUID() })
-    );
 
     this.#handleFormSubmit(this.#stateToPoint(this._state));
   };
