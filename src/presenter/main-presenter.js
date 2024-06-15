@@ -12,6 +12,7 @@ import TripListContainer from '../view/trip-list-container.js';
 import TripEmpty from '../view/trip-empty.js';
 
 import PointPresenter from './point-presenter.js';
+import TripInfoPresenter from './trip-info-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 
 export default class MainPresenter {
@@ -20,12 +21,12 @@ export default class MainPresenter {
   #offersModel = null;
   #filtersModel = null;
 
+  #tripInfoPresenter = null;
   #newPointPresenter = null;
 
-  #tripEventMessageComponent = null;
-  #tripInfoComponent = null;
+  #tripEventLoadingMessageComponent = null;
+  #tripEventFailedMessageComponent = null;
   #tripFiltersElementComponent = null;
-  #tripEventButtonComponent = null;
   #tripListContainerComponent = null;
   #tripSortComponent = null;
   #tripEmptyComponent = null;
@@ -149,15 +150,15 @@ export default class MainPresenter {
   }
 
   #renderLoading() {
-    this.#tripEventMessageComponent = new TripEventTripEventMessage({ message: EventMessage.LOADING });
+    this.#tripEventLoadingMessageComponent = new TripEventTripEventMessage({ message: EventMessage.LOADING });
 
-    render(this.#tripEventMessageComponent, this.#tripEventsElement);
+    render(this.#tripEventLoadingMessageComponent, this.#tripEventsElement);
   }
 
   #renderFailedLoadData() {
-    this.#tripEventMessageComponent = new TripEventTripEventMessage({ message: EventMessage.FAILED_LOAD_DATA });
+    this.#tripEventFailedMessageComponent = new TripEventTripEventMessage({ message: EventMessage.FAILED_LOAD_DATA });
 
-    render(this.#tripEventMessageComponent, this.#tripEventsElement);
+    render(this.#tripEventFailedMessageComponent, this.#tripEventsElement);
   }
 
   #resetAllEditForms = () => {
@@ -168,11 +169,10 @@ export default class MainPresenter {
   #clearBoard({ resetSortType = false } = {}) {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+    this.#tripInfoPresenter.destroy();
     this.#newPointPresenter.destroy();
 
-    remove(this.#tripInfoComponent);
     remove(this.#tripFiltersElementComponent);
-    remove(this.#tripEventButtonComponent);
 
     remove(this.#tripSortComponent);
     remove(this.#tripListContainerComponent);
@@ -186,11 +186,14 @@ export default class MainPresenter {
   #renderBoard() {
     if (this.#isLoading) {
       this.#renderLoading();
+
       return;
     }
 
     if (this.points.length) {
-      remove(this.#tripEventMessageComponent);
+      this.#tripInfoPresenter = new TripInfoPresenter({ points: this.points, destinationsModel: this.#destinationsModel });
+
+      this.#tripInfoPresenter.init();
 
       this.#newPointPresenter.enabledButton();
 
@@ -270,10 +273,11 @@ export default class MainPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
-        remove(this.#tripEventMessageComponent);
+        remove(this.#tripEventLoadingMessageComponent);
 
         if (data.isError) {
           this.#renderFailedLoadData();
+
           return;
         }
 
