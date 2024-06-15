@@ -20,6 +20,6 @@ export default class EventAddButton extends AbstractView {
   #showAddNewPointFormHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleShowAddNewPointForm(evt);
+    this.#handleShowAddNewPointForm();
   };
 }

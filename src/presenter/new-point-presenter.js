@@ -4,6 +4,7 @@ import EventAddButton from '../view/event-add-button.js';
 import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 
 export default class NewPointPresenter {
+  #points = [];
   #offersModel = [];
   #destinationsModel = null;
   #filtersModel = null;
@@ -15,7 +16,8 @@ export default class NewPointPresenter {
   #eventAddButtonComponent = null;
   #formAddNewPointComponent = null;
 
-  constructor({ offersModel, destinationsModel, filtersModel, onTripEventPointUpdate }) {
+  constructor({ points, offersModel, destinationsModel, filtersModel, onTripEventPointUpdate }) {
+    this.#points = points;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filtersModel = filtersModel;
@@ -30,8 +32,6 @@ export default class NewPointPresenter {
   }
 
   init() {
-    this.#initAddNewPointComponent();
-
     render(this.#eventAddButtonComponent, this.#tripMainElement);
   }
 
@@ -46,6 +46,14 @@ export default class NewPointPresenter {
     this.#eventAddButtonComponent.element.removeAttribute('disabled');
   }
 
+  disabledButton() {
+    this.#eventAddButtonComponent.element.setAttribute('disabled', true);
+  }
+
+  enabledButton() {
+    this.#eventAddButtonComponent.element.removeAttribute('disabled');
+  }
+
   #initAddNewPointComponent() {
     this.#formAddNewPointComponent = new FormAddNewPoint({
       mainOffers: this.#offersModel.offers,
@@ -56,13 +64,14 @@ export default class NewPointPresenter {
     });
   }
 
-  #handleClickAddNewPointButton = (evt) => {
+  #handleClickAddNewPointButton = () => {
     this.#filtersModel.setFilter(UpdateType.MAJOR, FiltersType.EVERYTHING);
 
-    const button = evt.target;
-    button.setAttribute('disabled', true);
+    this.disabledButton();
 
     const tripEventListElement = document.querySelector('.trip-events__list');
+
+    this.#initAddNewPointComponent();
 
     render(this.#formAddNewPointComponent, tripEventListElement, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#escKeyDownHandler);

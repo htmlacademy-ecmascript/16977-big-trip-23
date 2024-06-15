@@ -2,8 +2,9 @@ import { remove, render } from '../framework/render.js';
 import { SortBuilder } from '../util/sort-builder.js';
 import { FiltersBuilder } from '../util/filters-builder.js';
 
-import { TravelSortItem, UserAction, UpdateType, FilterMessage } from '../constants.js';
+import { TravelSortItem, UserAction, UpdateType, FilterMessage, EventMessage } from '../constants.js';
 
+import TripEventTripEventMessage from '../view/trip-event-message.js';
 import TripSort from '../view/trip-sort.js';
 import TripListContainer from '../view/trip-list-container.js';
 import TripEmpty from '../view/trip-empty.js';
@@ -19,6 +20,7 @@ export default class MainPresenter {
 
   #newPointPresenter = null;
 
+  #tripEventMessageComponent = null;
   #tripInfoComponent = null;
   #tripFiltersElementComponent = null;
   #tripEventButtonComponent = null;
@@ -33,6 +35,8 @@ export default class MainPresenter {
   #pageMainElement = null;
   #tripEventsElement = null;
 
+  #isLoading = true;
+
   constructor({ pointsModel, destinationsModel, offersModel, filtersModel }) {
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
@@ -41,6 +45,14 @@ export default class MainPresenter {
 
     this.#pageMainElement = document.querySelector('.page-main');
     this.#tripEventsElement = this.#pageMainElement.querySelector('.trip-events');
+
+    this.#newPointPresenter = new NewPointPresenter({
+      points: this.points,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
+      filtersModel: this.#filtersModel,
+      onTripEventPointUpdate: this.#handleViewAction
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -63,22 +75,16 @@ export default class MainPresenter {
   }
 
   get offers() {
-    return [...this.#offersModel.offers];
+    return this.#offersModel.offers;
   }
 
   get destinations() {
-    return [...this.#destinationsModel.destinations];
+    return this.#destinationsModel.destinations;
   }
 
   init() {
-    this.#newPointPresenter = new NewPointPresenter({
-      offersModel: this.#offersModel,
-      destinationsModel: this.#destinationsModel,
-      filtersModel: this.#filtersModel,
-      onTripEventPointUpdate: this.#handleViewAction
-    });
-
     this.#newPointPresenter.init();
+    this.#newPointPresenter.disabledButton();
 
     this.#renderBoard();
   }
@@ -137,6 +143,12 @@ export default class MainPresenter {
     render(this.#tripEmptyComponent, this.#tripEventsElement);
   }
 
+  #renderLoading() {
+    this.#tripEventMessageComponent = new TripEventTripEventMessage({ message: EventMessage.LOADING });
+
+    render(this.#tripEventMessageComponent, this.#tripEventsElement);
+  }
+
   #resetAllEditForms = () => {
     this.#pointPresenters.forEach((presenter) => presenter.reset());
     this.#newPointPresenter.destroy();
@@ -161,7 +173,16 @@ export default class MainPresenter {
   }
 
   #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length) {
+      remove(this.#tripEventMessageComponent);
+
+      this.#newPointPresenter.enabledButton();
+
       this.#renderTripSort();
 
       this.#renderTripListContainer();
@@ -208,13 +229,17 @@ export default class MainPresenter {
         this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-
         this.#clearBoard();
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-
         this.#clearBoard({ resetSortType: true });
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        // remove(this.#tripEventMessageComponent);
+
         this.#renderBoard();
         break;
     }

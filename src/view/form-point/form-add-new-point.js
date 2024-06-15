@@ -222,13 +222,15 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     const price = evt.target.value;
     const isValidPrice = /^[1-9]\d*$/.test(price);
 
+    console.log(price);
+
     if (isValidPrice) {
       this.updateElement(
         this.#getUpdatedState({ basePrice: Number(price) })
       );
     } else {
       this.updateElement(
-        this.#getUpdatedState({ basePrice: 0 })
+        this.#getUpdatedState({ basePrice: 1 })
       );
     }
   };

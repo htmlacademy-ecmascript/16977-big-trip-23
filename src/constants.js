@@ -45,7 +45,8 @@ const UserAction = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
-  MAJOR: 'MAJOR'
+  MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const FiltersType = {
@@ -62,4 +63,13 @@ const FilterMessage = {
   [FiltersType.PAST]: 'There are no past events now'
 };
 
-export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage };
+const AUTHORIZATION = 'Basic ladnoitaksoidet';
+
+const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
+
+const EventMessage = {
+  FAILED_LOAD_DATA: 'Failed to load latest route information',
+  LOADING: 'Loading...'
+};
+
+export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage };

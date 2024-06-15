@@ -208,7 +208,7 @@ export default class FormEditPoint extends AbstractStatefulView {
       );
     } else {
       this.updateElement(
-        this.#getUpdatedState({ basePrice: 0 })
+        this.#getUpdatedState({ basePrice: 1 })
       );
     }
   };
