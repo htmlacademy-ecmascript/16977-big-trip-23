@@ -65,7 +65,7 @@ const FilterMessage = {
 
 const AUTHORIZATION = 'Basic ladnoitaksoidet';
 
-const END_POINT = 'https://23.objects.htmlacademy.2pro/big-trip';
+const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
 
 const EventMessage = {
   FAILED_LOAD_DATA: 'Failed to load latest route information',

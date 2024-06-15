@@ -8,11 +8,13 @@ export default class DateBuilder {
   #date = null;
   #dateFrom = null;
   #dateTo = null;
+  #points = null;
 
-  constructor({ date, dateFrom, dateTo }) {
+  constructor({ date, dateFrom, dateTo, points }) {
     this.#date = date;
     this.#dateFrom = dateFrom;
     this.#dateTo = dateTo;
+    this.#points = points;
   }
 
   getTime() {
@@ -63,6 +65,20 @@ export default class DateBuilder {
 
   getDurationTime() {
     return dayjs(this.#dateTo).diff(dayjs(this.#dateFrom));
+  }
+
+  getMinDate() {
+    const minDateCollection = this.#points.map((point) => dayjs(point.dateFrom)).sort((a, b) => a - b);
+    const minDate = minDateCollection[0].format('DD MMM');
+
+    return minDate;
+  }
+
+  getMaxDate() {
+    const maxDateCollection = this.#points.map((point) => dayjs(point.dateTo)).sort((a, b) => b - a);
+    const maxDate = maxDateCollection[0].format('DD MMM');
+
+    return maxDate;
   }
 
   static isDateEqual(firstDate, secondDate) {
