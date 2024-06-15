@@ -30,7 +30,11 @@ export default class FormEditPoint extends AbstractStatefulView {
     this.#mainDestinations = mainDestinations;
 
     this._setState({
-      point: { ...point, destination: currentDestination, offers: currentOffers }
+      point: {
+        ...point,
+        destination: currentDestination,
+        offers: currentOffers
+      }
     });
 
     this.#handleRollupClick = onRollupClick;
@@ -88,17 +92,31 @@ export default class FormEditPoint extends AbstractStatefulView {
   }
 
   #stateToPoint(state) {
-    return {
+    const point = {
       ...state.point,
       destination: state.point.destination.id,
       offers: this._state.point.offers.map((offer) => offer.id)
     };
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDelete;
+
+    return point;
   }
 
   #getUpdatedState(update) {
-    return {
-      point: { ...this._state.point, ...update }
-    };
+    this._setState({
+      point: {
+        ...this._state.point,
+        ...update,
+        isDisabled: false,
+        isSaving: false,
+        isDelete: false
+      }
+    });
+
+    return this._state;
   }
 
   #setDatepickerStart() {
