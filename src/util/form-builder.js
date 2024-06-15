@@ -67,7 +67,7 @@ const createDestinationSectionTemplate = (destination) => {
     </section>`);
 };
 
-const createFormPointTemplate = ({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) => {
+const createFormPointTemplate = ({ settingsForm, point, currentDestination, currentOffers, mainOffers, mainDestinations }) => {
   const { basePrice, dateFrom, dateTo, type } = point;
   const { name } = currentDestination;
 
@@ -75,6 +75,8 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
   const fullEndDateAndTime = new DateBuilder({ date: dateTo }).getFullDateAndTimeCalendarFormat();
 
   const offersByType = mainOffers.find((mainOffer) => mainOffer.type === point.type);
+
+  const { resetButtonName } = settingsForm;
 
   return (`
     <form class="event event--edit" action="#" method="post">
@@ -118,11 +120,11 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" required name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__reset-btn" type="reset">${resetButtonName}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -136,13 +138,16 @@ const createFormPointTemplate = ({ point, currentDestination, currentOffers, mai
 };
 
 export default class FormBuilder {
+  #settingsForm = {};
   #point = [];
   #currentDestination = [];
   #currentOffers = [];
   #mainOffers = [];
   #mainDestinations = [];
 
-  constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations }) {
+  constructor({ settingsForm, point, currentDestination, currentOffers, mainOffers, mainDestinations }) {
+    this.#settingsForm = settingsForm;
+
     this.#point = point;
     this.#currentDestination = currentDestination;
     this.#currentOffers = currentOffers;
@@ -152,6 +157,7 @@ export default class FormBuilder {
 
   getFormPointTemplate() {
     return createFormPointTemplate({
+      settingsForm: this.#settingsForm,
       point: this.#point,
       currentDestination: this.#currentDestination,
       currentOffers: this.#currentOffers,

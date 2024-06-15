@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import { TimeInMillisecond } from '../constants.js';
+
+dayjs.extend(duration);
 
 export default class DateBuilder {
   #date = null;
@@ -37,15 +40,22 @@ export default class DateBuilder {
   }
 
   getDifferenceTime() {
-    const differenceMillisecond = dayjs(this.#dateTo).diff(this.#dateFrom, 'millisecond');
+    const differenceMillisecond = dayjs(this.#dateTo).diff(dayjs(this.#dateFrom));
+    const dateDuration = dayjs.duration(differenceMillisecond);
+
+    const years = Math.floor(dateDuration.asYears());
+    const days = Math.floor(dateDuration.asDays()) - (years * 365);
+    const hours = dateDuration.hours();
+    const minutes = dateDuration.minutes();
+
     let currentDifference;
 
     if (differenceMillisecond < TimeInMillisecond.HOUR) {
-      currentDifference = dayjs(differenceMillisecond).format('mm[M]');
+      currentDifference = `${minutes}M`;
     } else if ((differenceMillisecond >= TimeInMillisecond.HOUR) && (differenceMillisecond < TimeInMillisecond.DAY)) {
-      currentDifference = dayjs(differenceMillisecond).format('HH[H] mm[M]');
+      currentDifference = `${hours}H ${minutes}M`;
     } else if (differenceMillisecond >= TimeInMillisecond.DAY) {
-      currentDifference = dayjs(differenceMillisecond).format('DD[D] HH[H] mm[M]');
+      currentDifference = `${days}D ${hours}H ${minutes}M`;
     }
 
     return currentDifference;

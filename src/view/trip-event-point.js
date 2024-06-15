@@ -71,6 +71,7 @@ export default class TripEventPoint extends AbstractView {
 
   constructor({ point, currentDestination, currentOffers, onRollupClick, onFavoriteClick }) {
     super();
+
     this.#point = point;
     this.#currentDestination = currentDestination;
     this.#currentOffers = currentOffers;
