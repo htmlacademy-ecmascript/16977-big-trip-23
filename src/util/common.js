@@ -6,4 +6,6 @@ const showMistakeStateField = (element) => {
   }, 1000);
 };
 
-export { showMistakeStateField };
+const addZeroToNumber = (num) => num.length > 1 ? num : `0${num}`;
+
+export { showMistakeStateField, addZeroToNumber };

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { FiltersType } from '../constants';
 
-export class FiltersBuilder {
+export default class FiltersBuilder {
   #data = [];
 
   constructor({ data = [] }) {
@@ -21,7 +21,7 @@ export class FiltersBuilder {
   }
 
   getPastPoints() {
-    return this.#data.filter((item) => dayjs(item.dateFrom) < dayjs(new Date()));
+    return this.#data.filter((item) => dayjs(item.dateTo) < dayjs(new Date()));
   }
 
   getFilteredCollections() {

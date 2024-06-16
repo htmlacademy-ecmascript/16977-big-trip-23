@@ -63,7 +63,7 @@ const FilterMessage = {
   [FiltersType.PAST]: 'There are no past events now'
 };
 
-const AUTHORIZATION = 'Basic ladnoitaksoidet';
+const AUTHORIZATION = 'Basic ladnoitaksoidet!';
 
 const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
 

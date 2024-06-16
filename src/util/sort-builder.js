@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import DateBuilder from './date-builder.js';
 
-export class SortBuilder {
+export default class SortBuilder {
   #data = [];
 
   constructor({ data }) {

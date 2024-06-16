@@ -15,7 +15,7 @@ export default class FormEditPoint extends AbstractStatefulView {
   #eventTypeGroup = null;
   #eventInputDestination = null;
   #eventInputPrice = null;
-  #offersInput = null;
+  #eventAvailableOffers = null;
 
   #handleRollupClick = null;
   #handleFormSubmit = null;
@@ -72,7 +72,8 @@ export default class FormEditPoint extends AbstractStatefulView {
     this.#eventTypeGroup = this.element.querySelector('.event__type-group');
     this.#eventInputDestination = this.element.querySelector('.event__input--destination');
     this.#eventInputPrice = this.element.querySelector('.event__input--price');
-    this.#offersInput = this.element.querySelectorAll('.event__offer-checkbox');
+
+    this.#eventAvailableOffers = this.element.querySelector('.event__available-offers');
 
     this.#rollupButton.addEventListener('click', this.#rollupButtonClickHandler);
     this.#formEventEdit.addEventListener('submit', this.#formSubmitHandler);
@@ -82,9 +83,8 @@ export default class FormEditPoint extends AbstractStatefulView {
     this.#eventInputDestination.addEventListener('change', this.#eventFieldDestinationChangeHandler);
     this.#eventInputPrice.addEventListener('change', this.#eventFieldPriceChangeHandler);
 
-
-    for (const offerInput of this.#offersInput) {
-      offerInput.addEventListener('click', this.#offersChangeHandler);
+    if (this.element.querySelector('.event__offer-checkbox') !== null) {
+      this.#eventAvailableOffers.addEventListener('change', this.#offersChangeHandler);
     }
 
     this.#setDatepickerStart();
@@ -221,9 +221,7 @@ export default class FormEditPoint extends AbstractStatefulView {
     const isValidPrice = /^[1-9]\d*$/.test(price);
 
     if (isValidPrice) {
-      this.updateElement(
-        this.#getUpdatedState({ basePrice: Number(price) })
-      );
+      this.#getUpdatedState({ basePrice: Number(price) });
     } else {
       this.updateElement(
         this.#getUpdatedState({ basePrice: 1 })
@@ -239,23 +237,20 @@ export default class FormEditPoint extends AbstractStatefulView {
       const currentTypeOffers = this.#mainOffers.find((mainOffer) => mainOffer.type === this._state.point.type).offers;
       const newOfferIndex = currentTypeOffers.findIndex((offer) => offer.id === hash);
 
-      this.updateElement(
-        this.#getUpdatedState(
-          {
-            offers: [
-              ...this._state.point.offers,
-              currentTypeOffers[newOfferIndex],
-            ]
-          }
-        )
+      this.#getUpdatedState(
+        {
+          offers: [
+            ...this._state.point.offers.slice(0, newOfferIndex),
+            currentTypeOffers[newOfferIndex],
+            ...this._state.point.offers.slice(newOfferIndex),
+          ]
+        }
       );
     } else {
       const currentPointOffers = this._state.point.offers.filter((offer) => offer.id !== hash);
 
-      this.updateElement(
-        this.#getUpdatedState(
-          { offers: currentPointOffers }
-        )
+      this.#getUpdatedState(
+        { offers: currentPointOffers }
       );
     }
   };

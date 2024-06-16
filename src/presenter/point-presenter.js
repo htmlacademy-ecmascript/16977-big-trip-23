@@ -156,6 +156,7 @@ export default class PointPresenter {
       this.#resetFormEditPoint();
 
       this.#replacePointInsteadForm();
+
       document.removeEventListener('keydown', this.#escKeyDownHandler);
 
       this.#mode = Mode.DEFAULT;
@@ -164,7 +165,9 @@ export default class PointPresenter {
 
   #handleShowEditPoint = () => {
     this.#handleAllEditFormReset();
+
     this.#replaceFormInsteadPoint();
+
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
     this.#mode = Mode.EDIT;
@@ -197,8 +200,6 @@ export default class PointPresenter {
       isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR,
       update,
     );
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleDeleteClick = (point) => {

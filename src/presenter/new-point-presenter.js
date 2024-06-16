@@ -83,12 +83,12 @@ export default class NewPointPresenter {
       mainDestinations: this.#destinationsModel.destinations,
       onRollupClick: () => this.#handleHideEditPoint(),
       onFormSubmit: this.#handleSubmitFormEditPoint,
-      onDeleteClick: this.#handleDeleteClick,
+      onCancelClick: this.#handleCancelClick,
     });
   }
 
   #handleClickAddNewPointButton = () => {
-    this.#filtersModel.setFilter(UpdateType.MAJOR, FiltersType.EVERYTHING);
+    this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: true });
 
     this.disabledButton();
 
@@ -106,12 +106,16 @@ export default class NewPointPresenter {
 
       this.destroy();
 
+      this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
+
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   };
 
   #handleHideEditPoint = () => {
     this.destroy();
+
+    this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
@@ -122,11 +126,11 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       update,
     );
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleDeleteClick = () => {
+  #handleCancelClick = () => {
     this.destroy();
+
+    this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
   };
 }

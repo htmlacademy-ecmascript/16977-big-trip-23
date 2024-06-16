@@ -2,19 +2,25 @@ import { render, RenderPosition, remove } from '../framework/render.js';
 import TripInfo from '../view/trip-info.js';
 
 export default class TripInfoPresenter {
-  #points = [];
+  #pointsModel = null;
   #destinationsModel = null;
+  #offersModel = null;
 
   #tripInfoComponent = null;
 
   #pageHeaderElement = null;
   #tripMainElement = null;
 
-  constructor({ points, destinationsModel }) {
-    this.#points = points;
+  constructor({ pointsModel, destinationsModel, offersModel }) {
+    this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
 
-    this.#tripInfoComponent = new TripInfo({ points: this.#points, destinationsModel: this.#destinationsModel });
+    this.#tripInfoComponent = new TripInfo({
+      pointsModel: this.#pointsModel,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel
+    });
 
     this.#pageHeaderElement = document.querySelector('.page-header');
     this.#tripMainElement = this.#pageHeaderElement.querySelector('.trip-main');
