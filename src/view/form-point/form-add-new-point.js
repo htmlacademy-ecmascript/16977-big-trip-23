@@ -33,14 +33,14 @@ export default class FormAddNewPoint extends AbstractStatefulView {
   #eventInputPrice = null;
   #eventAvailableOffers = null;
 
-  #handleRollupClick = null;
+  #handleRollupButtonClick = null;
   #handleFormSubmit = null;
-  #handleCancelClick = null;
+  #handleCancelButtonClick = null;
 
   #datepickerStart = null;
   #datepickerEnd = null;
 
-  constructor({ mainOffers, mainDestinations, onRollupClick, onFormSubmit, onCancelClick }) {
+  constructor({ mainOffers, mainDestinations, onRollupButtonClick, onFormSubmit, onCancelButtonClick }) {
     super();
     this.#mainOffers = mainOffers;
     this.#mainDestinations = mainDestinations;
@@ -53,9 +53,9 @@ export default class FormAddNewPoint extends AbstractStatefulView {
       }
     });
 
-    this.#handleRollupClick = onRollupClick;
+    this.#handleRollupButtonClick = onRollupButtonClick;
     this.#handleFormSubmit = onFormSubmit;
-    this.#handleCancelClick = onCancelClick;
+    this.#handleCancelButtonClick = onCancelButtonClick;
 
     this._restoreHandlers();
   }
@@ -164,7 +164,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
   #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleRollupClick();
+    this.#handleRollupButtonClick();
   };
 
   #formSubmitHandler = (evt) => {
@@ -198,7 +198,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
   #cancelButtonClickHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleCancelClick(this.#stateToPoint(this._state));
+    this.#handleCancelButtonClick(this.#stateToPoint(this._state));
   };
 
   #eventTypeGroupChangeHandler = (evt) => {

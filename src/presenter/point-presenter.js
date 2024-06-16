@@ -45,8 +45,8 @@ export default class PointPresenter {
       point: this.#point,
       currentDestination: currentDestination,
       currentOffers: currentOffers,
-      onRollupClick: () => this.#handleShowEditPoint(),
-      onFavoriteClick: () => this.#handleSwitchFavorite(),
+      onRollupButtonClick: () => this.#handleEditPointShow(),
+      onFavoriteButtonClick: () => this.#handleFavoriteButtonClick(),
     });
 
     this.#tripFormEditPointComponent = new FormEditPoint({
@@ -55,9 +55,9 @@ export default class PointPresenter {
       currentOffers: currentOffers,
       mainOffers: this.#mainOffers,
       mainDestinations: this.#mainDestinations,
-      onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: this.#handleSubmitFormEditPoint,
-      onDeleteClick: this.#handleDeleteClick,
+      onRollupButtonClick: () => this.#handleEditPointHide(),
+      onFormSubmit: this.#handleFormEditPointSubmit,
+      onDeleteButtonClick: this.#handleDeleteButtonClick,
     });
 
     if (prevTripEventPoint === null || prevFormEditPoint === null) {
@@ -76,7 +76,7 @@ export default class PointPresenter {
 
   reset() {
     if (this.#mode === Mode.EDIT) {
-      this.#handleHideEditPoint();
+      this.#handleEditPointHide();
     }
   }
 
@@ -163,7 +163,7 @@ export default class PointPresenter {
     }
   };
 
-  #handleShowEditPoint = () => {
+  #handleEditPointShow = () => {
     this.#handleAllEditFormReset();
 
     this.#replaceFormInsteadPoint();
@@ -173,7 +173,7 @@ export default class PointPresenter {
     this.#mode = Mode.EDIT;
   };
 
-  #handleHideEditPoint = () => {
+  #handleEditPointHide = () => {
     this.#resetFormEditPoint();
 
     this.#replacePointInsteadForm();
@@ -182,7 +182,7 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
   };
 
-  #handleSwitchFavorite = () => {
+  #handleFavoriteButtonClick = () => {
     this.#handleTripEventPointUpdate(
       UserAction.UPDATE_POINT,
       UpdateType.PATCH,
@@ -190,7 +190,7 @@ export default class PointPresenter {
     );
   };
 
-  #handleSubmitFormEditPoint = (update) => {
+  #handleFormEditPointSubmit = (update) => {
     const isDateEqual = DateBuilder.isDateEqual(this.#point.dateFrom, update.dateFrom) && DateBuilder.isDateEqual(this.#point.dateTo, update.dateTo);
     const isOldPrice = this.#point.basePrice === update.basePrice;
     const isPatchUpdate = isDateEqual && isOldPrice;
@@ -202,7 +202,7 @@ export default class PointPresenter {
     );
   };
 
-  #handleDeleteClick = (point) => {
+  #handleDeleteButtonClick = (point) => {
     this.#handleTripEventPointUpdate(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,

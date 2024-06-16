@@ -17,14 +17,14 @@ export default class FormEditPoint extends AbstractStatefulView {
   #eventInputPrice = null;
   #eventAvailableOffers = null;
 
-  #handleRollupClick = null;
+  #handleRollupButtonClick = null;
   #handleFormSubmit = null;
-  #handleDeleteClick = null;
+  #handleDeleteButtonClick = null;
 
   #datepickerStart = null;
   #datepickerEnd = null;
 
-  constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations, onRollupClick, onFormSubmit, onDeleteClick }) {
+  constructor({ point, currentDestination, currentOffers, mainOffers, mainDestinations, onRollupButtonClick, onFormSubmit, onDeleteButtonClick }) {
     super();
     this.#mainOffers = mainOffers;
     this.#mainDestinations = mainDestinations;
@@ -37,9 +37,9 @@ export default class FormEditPoint extends AbstractStatefulView {
       }
     });
 
-    this.#handleRollupClick = onRollupClick;
+    this.#handleRollupButtonClick = onRollupButtonClick;
     this.#handleFormSubmit = onFormSubmit;
-    this.#handleDeleteClick = onDeleteClick;
+    this.#handleDeleteButtonClick = onDeleteButtonClick;
 
     this._restoreHandlers();
   }
@@ -150,7 +150,7 @@ export default class FormEditPoint extends AbstractStatefulView {
   #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleRollupClick();
+    this.#handleRollupButtonClick();
   };
 
   #formSubmitHandler = (evt) => {
@@ -184,7 +184,7 @@ export default class FormEditPoint extends AbstractStatefulView {
   #deleteButtonClickHandler = (evt) => {
     evt.preventDefault();
 
-    this.#handleDeleteClick(this.#stateToPoint(this._state));
+    this.#handleDeleteButtonClick(this.#stateToPoint(this._state));
   };
 
   #eventTypeGroupChangeHandler = (evt) => {

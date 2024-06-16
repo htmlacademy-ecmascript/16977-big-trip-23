@@ -25,7 +25,7 @@ export default class NewPointPresenter {
     this.#tripMainElement = this.#pageHeaderElement.querySelector('.trip-main');
 
     this.#eventAddButtonComponent = new EventAddButton({
-      onClickAddNewPointButton: this.#handleClickAddNewPointButton
+      onClickAddNewPointButton: this.#handleAddNewPointButtonClick
     });
   }
 
@@ -81,13 +81,13 @@ export default class NewPointPresenter {
     this.#formAddNewPointComponent = new FormAddNewPoint({
       mainOffers: this.#offersModel.offers,
       mainDestinations: this.#destinationsModel.destinations,
-      onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: this.#handleSubmitFormEditPoint,
-      onCancelClick: this.#handleCancelClick,
+      onRollupButtonClick: () => this.#handleEditPointHide(),
+      onFormSubmit: this.#handleFormEditPointSubmit,
+      onCancelButtonClick: this.#handleCancelButtonClick,
     });
   }
 
-  #handleClickAddNewPointButton = () => {
+  #handleAddNewPointButtonClick = () => {
     this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: true });
 
     this.disabledButton();
@@ -112,7 +112,7 @@ export default class NewPointPresenter {
     }
   };
 
-  #handleHideEditPoint = () => {
+  #handleEditPointHide = () => {
     this.destroy();
 
     this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
@@ -120,7 +120,7 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleSubmitFormEditPoint = (update) => {
+  #handleFormEditPointSubmit = (update) => {
     this.#handleTripEventPointUpdate(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
@@ -128,7 +128,7 @@ export default class NewPointPresenter {
     );
   };
 
-  #handleCancelClick = () => {
+  #handleCancelButtonClick = () => {
     this.destroy();
 
     this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
