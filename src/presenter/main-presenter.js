@@ -1,8 +1,8 @@
-import { remove, render } from '../framework/render.js';
+import { RenderPosition, remove, render } from '../framework/render.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
-import { SortBuilder } from '../util/sort-builder.js';
-import { FiltersBuilder } from '../util/filters-builder.js';
+import SortBuilder from '../util/sort-builder.js';
+import FiltersBuilder from '../util/filters-builder.js';
 
 import { TravelSortItem, UserAction, UpdateType, FilterMessage, EventMessage, TimeLimitUiBlockAnimation } from '../constants.js';
 
@@ -57,7 +57,13 @@ export default class MainPresenter {
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
       filtersModel: this.#filtersModel,
-      onTripEventPointUpdate: this.#handleViewAction
+      onTripEventPointUpdate: this.#handleViewAction,
+    });
+
+    this.#tripInfoPresenter = new TripInfoPresenter({
+      pointsModel: this.#pointsModel,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -101,7 +107,7 @@ export default class MainPresenter {
       onTripSortChange: this.#handleTripSortChange
     });
 
-    render(this.#tripSortComponent, this.#tripEventsElement);
+    render(this.#tripSortComponent, this.#tripEventsElement, RenderPosition.AFTERBEGIN);
   }
 
   #renderTripListContainer() {
@@ -190,16 +196,14 @@ export default class MainPresenter {
       return;
     }
 
-    if (this.points.length) {
-      this.#tripInfoPresenter = new TripInfoPresenter({ points: this.points, destinationsModel: this.#destinationsModel });
+    this.#newPointPresenter.enabledButton();
 
+    this.#renderTripListContainer();
+
+    if (this.points.length) {
       this.#tripInfoPresenter.init();
 
-      this.#newPointPresenter.enabledButton();
-
       this.#renderTripSort();
-
-      this.#renderTripListContainer();
 
       this.#renderTripEventPoints({
         points: this.points,
@@ -270,6 +274,12 @@ export default class MainPresenter {
       case UpdateType.MAJOR:
         this.#clearBoard({ resetSortType: true });
         this.#renderBoard();
+
+        remove(this.#tripEmptyComponent);
+
+        if (!data.isHidden && this.points.length === 0) {
+          this.#renderTripEmpty();
+        }
         break;
       case UpdateType.INIT:
         this.#isLoading = false;

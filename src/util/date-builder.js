@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { TimeInMillisecond } from '../constants.js';
+import { addZeroToNumber } from './common.js';
 
 dayjs.extend(duration);
 
@@ -45,19 +46,18 @@ export default class DateBuilder {
     const differenceMillisecond = dayjs(this.#dateTo).diff(dayjs(this.#dateFrom));
     const dateDuration = dayjs.duration(differenceMillisecond);
 
-    const years = Math.floor(dateDuration.asYears());
-    const days = Math.floor(dateDuration.asDays()) - (years * 365);
-    const hours = dateDuration.hours();
-    const minutes = dateDuration.minutes();
+    const days = String(Math.floor(dateDuration.asDays()));
+    const hours = String(dateDuration.hours());
+    const minutes = String(dateDuration.minutes());
 
     let currentDifference;
 
     if (differenceMillisecond < TimeInMillisecond.HOUR) {
-      currentDifference = `${minutes}M`;
+      currentDifference = `${addZeroToNumber(minutes)}M`;
     } else if ((differenceMillisecond >= TimeInMillisecond.HOUR) && (differenceMillisecond < TimeInMillisecond.DAY)) {
-      currentDifference = `${hours}H ${minutes}M`;
+      currentDifference = `${addZeroToNumber(hours)}H ${addZeroToNumber(minutes)}M`;
     } else if (differenceMillisecond >= TimeInMillisecond.DAY) {
-      currentDifference = `${days}D ${hours}H ${minutes}M`;
+      currentDifference = `${addZeroToNumber(days)}D ${addZeroToNumber(hours)}H ${addZeroToNumber(minutes)}M`;
     }
 
     return currentDifference;
@@ -69,16 +69,22 @@ export default class DateBuilder {
 
   getMinDate() {
     const minDateCollection = this.#points.map((point) => dayjs(point.dateFrom)).sort((a, b) => a - b);
-    const minDate = minDateCollection[0].format('DD MMM');
 
-    return minDate;
+    if (!minDateCollection.length) {
+      return;
+    }
+
+    return minDateCollection[0].format('DD MMM');
   }
 
   getMaxDate() {
     const maxDateCollection = this.#points.map((point) => dayjs(point.dateTo)).sort((a, b) => b - a);
-    const maxDate = maxDateCollection[0].format('DD MMM');
 
-    return maxDate;
+    if (!maxDateCollection.length) {
+      return;
+    }
+
+    return maxDateCollection[0].format('DD MMM');
   }
 
   static isDateEqual(firstDate, secondDate) {

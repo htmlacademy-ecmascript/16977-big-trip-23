@@ -25,7 +25,7 @@ export default class NewPointPresenter {
     this.#tripMainElement = this.#pageHeaderElement.querySelector('.trip-main');
 
     this.#eventAddButtonComponent = new EventAddButton({
-      onClickAddNewPointButton: this.#handleClickAddNewPointButton
+      onClickAddNewPointButton: this.#handleAddNewPointButtonClick
     });
   }
 
@@ -81,14 +81,14 @@ export default class NewPointPresenter {
     this.#formAddNewPointComponent = new FormAddNewPoint({
       mainOffers: this.#offersModel.offers,
       mainDestinations: this.#destinationsModel.destinations,
-      onRollupClick: () => this.#handleHideEditPoint(),
-      onFormSubmit: this.#handleSubmitFormEditPoint,
-      onDeleteClick: this.#handleDeleteClick,
+      onRollupButtonClick: () => this.#handleEditPointHide(),
+      onFormSubmit: this.#handleFormEditPointSubmit,
+      onCancelButtonClick: this.#handleCancelButtonClick,
     });
   }
 
-  #handleClickAddNewPointButton = () => {
-    this.#filtersModel.setFilter(UpdateType.MAJOR, FiltersType.EVERYTHING);
+  #handleAddNewPointButtonClick = () => {
+    this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: true });
 
     this.disabledButton();
 
@@ -106,27 +106,31 @@ export default class NewPointPresenter {
 
       this.destroy();
 
+      this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
+
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   };
 
-  #handleHideEditPoint = () => {
+  #handleEditPointHide = () => {
     this.destroy();
+
+    this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleSubmitFormEditPoint = (update) => {
+  #handleFormEditPointSubmit = (update) => {
     this.#handleTripEventPointUpdate(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       update,
     );
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleDeleteClick = () => {
+  #handleCancelButtonClick = () => {
     this.destroy();
+
+    this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
   };
 }
