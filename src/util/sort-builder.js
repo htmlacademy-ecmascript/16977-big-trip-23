@@ -9,14 +9,14 @@ export default class SortBuilder {
   }
 
   getDaySort() {
-    return this.#data.sort((a, b) => dayjs(a.dateFrom).valueOf() - dayjs(b.dateFrom).valueOf());
+    return this.#data.sort((nextPoint, prevPoint) => dayjs(nextPoint.dateFrom).valueOf() - dayjs(prevPoint.dateFrom).valueOf());
   }
 
   getSortByTime() {
-    return this.#data.sort((a, b) => new DateBuilder({ dateFrom: b.dateFrom, dateTo: b.dateTo }).getDurationTime() - new DateBuilder({ dateFrom: a.dateFrom, dateTo: a.dateTo }).getDurationTime());
+    return this.#data.sort((nextPoint, prevPoint) => new DateBuilder({ dateFrom: prevPoint.dateFrom, dateTo: prevPoint.dateTo }).getDurationTime() - new DateBuilder({ dateFrom: nextPoint.dateFrom, dateTo: nextPoint.dateTo }).getDurationTime());
   }
 
   getSortByPrice() {
-    return this.#data.sort((a, b) => b.basePrice - a.basePrice);
+    return this.#data.sort((nextPoint, prevPoint) => prevPoint.basePrice - nextPoint.basePrice);
   }
 }

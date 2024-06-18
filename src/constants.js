@@ -79,4 +79,17 @@ const TimeLimitUiBlockAnimation = {
 
 const MAX_VISIBLE_CITIES = 3;
 
-export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage, TimeLimitUiBlockAnimation, MAX_VISIBLE_CITIES };
+const DateFormat = {
+  DATE_MONTH: 'MMM DD',
+  MONTH_DAY: 'DD MMM',
+  DATE: 'YYYY-MM-DD',
+  TIME: 'HH:mm',
+  DATE_TIME_SYSTEM: 'YYYY-MM-DDTHH:mm',
+  DATE_TIME: 'DD/MM/YY HH:mm',
+  DAY: 'DD[d] HH[h] mm[m]',
+  HOURS: 'HH[h] mm[m]',
+  MINUTES: 'mm[m]',
+  DATE_PICKER: 'd/m/y H:i'
+};
+
+export { TravelSortItem, TimeInMillisecond, Mode, UserAction, UpdateType, FiltersType, FilterMessage, AUTHORIZATION, END_POINT, EventMessage, TimeLimitUiBlockAnimation, MAX_VISIBLE_CITIES, DateFormat };

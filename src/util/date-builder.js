@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { TimeInMillisecond } from '../constants.js';
+import { DateFormat, TimeInMillisecond } from '../constants.js';
 import { addZeroToNumber } from './common.js';
 
 dayjs.extend(duration);
@@ -19,19 +19,19 @@ export default class DateBuilder {
   }
 
   getTime() {
-    return dayjs(this.#date).format('HH:mm');
+    return dayjs(this.#date).format(DateFormat.TIME);
   }
 
   getMonthAndDay() {
-    return dayjs(this.#date).format('MMM DD');
+    return dayjs(this.#date).format(DateFormat.DATE_MONTH);
   }
 
   getFullDate() {
-    return dayjs(this.#date).format('YYYY-MM-DD');
+    return dayjs(this.#date).format(DateFormat.DATE);
   }
 
   getFullDateAndTime() {
-    return dayjs(this.#date).format('YYYY-MM-DDTHH:ss');
+    return dayjs(this.#date).format(DateFormat.DATE_TIME_SYSTEM);
   }
 
   getFullDateAndTimeCalendarFormat() {
@@ -39,7 +39,7 @@ export default class DateBuilder {
       return '';
     }
 
-    return dayjs(this.#date).format('DD/MM/YY HH:mm');
+    return dayjs(this.#date).format(DateFormat.DATE_TIME);
   }
 
   getDifferenceTime() {
@@ -74,7 +74,7 @@ export default class DateBuilder {
       return;
     }
 
-    return minDateCollection[0].format('DD MMM');
+    return minDateCollection[0].format(DateFormat.MONTH_DAY);
   }
 
   getMaxDate() {
@@ -84,7 +84,7 @@ export default class DateBuilder {
       return;
     }
 
-    return maxDateCollection[0].format('DD MMM');
+    return maxDateCollection[0].format(DateFormat.MONTH_DAY);
   }
 
   static isDateEqual(firstDate, secondDate) {
