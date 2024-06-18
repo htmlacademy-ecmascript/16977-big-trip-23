@@ -2,9 +2,9 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
 import { showMistakeStateField } from '../../util/common.js';
+import { DateFormat } from '../../constants.js';
 import FormBuilder from '../../util/form-builder.js';
 import TripListItem from '../trip-list-item.js';
-
 
 const DEFAULT_TRAVEL = {
   'basePrice': '0',
@@ -137,7 +137,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     this.#datepickerStart = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
-        dateFormat: 'd/m/y H:i',
+        dateFormat: DateFormat.DATE_PICKER,
         enableTime: true,
         'time_24hr': true,
         defaultDate: this._state.point.dateFrom,
@@ -151,7 +151,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     this.#datepickerEnd = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
-        dateFormat: 'd/m/y H:i',
+        dateFormat: DateFormat.DATE_PICKER,
         enableTime: true,
         'time_24hr': true,
         defaultDate: this._state.point.dateTo,

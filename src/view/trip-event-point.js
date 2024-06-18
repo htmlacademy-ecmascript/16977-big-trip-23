@@ -59,8 +59,8 @@ const createTripEventPointTemplate = ({ point, currentDestination, currentOffers
 };
 
 export default class TripEventPoint extends AbstractView {
-  #point = [];
-  #currentDestination = [];
+  #point = null;
+  #currentDestination = null;
   #currentOffers = [];
 
   #rollupButton = null;
@@ -84,7 +84,7 @@ export default class TripEventPoint extends AbstractView {
 
     this.#rollupButton.addEventListener('click', this.#rollupClickHandler);
 
-    this.#favoriteButton.addEventListener('click', this.#FavoriteButtonClickHandler);
+    this.#favoriteButton.addEventListener('click', this.#favoriteButtonClickHandler);
   }
 
   get template() {
@@ -98,7 +98,7 @@ export default class TripEventPoint extends AbstractView {
     this.#handleRollupButtonClick();
   };
 
-  #FavoriteButtonClickHandler = (evt) => {
+  #favoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleFavoriteButtonClick();
   };

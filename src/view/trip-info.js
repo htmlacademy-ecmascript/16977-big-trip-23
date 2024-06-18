@@ -31,12 +31,12 @@ const createInfoDatesTemplate = (points) => {
 
 const createInfoCostTemplate = (points, offersModel) => {
   const priceCollection = points.map((point) => point.basePrice);
-  const priceSumCollection = priceCollection.reduce((a, b) => a + b, 0);
+  const priceSumCollection = priceCollection.reduce((accumulator, price) => accumulator + price, 0);
 
   const offersCollection = points.map((point) => offersModel.getOffersCurrentPoint(point));
-  const offersSumCollection = offersCollection.map((offerCollection) => offerCollection.reduce((a, b) => a + b.price, 0));
+  const offersSumCollection = offersCollection.map((offerCollection) => offerCollection.reduce((accumulator, offer) => accumulator + offer.price, 0));
 
-  const offersSum = offersSumCollection.reduce((a, b) => a + b, 0);
+  const offersSum = offersSumCollection.reduce((accumulator, offerSum) => accumulator + offerSum, 0);
 
   const sum = priceSumCollection + offersSum;
 
