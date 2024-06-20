@@ -130,7 +130,5 @@ export default class NewPointPresenter {
     this.destroy();
 
     this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
-
-    this.#formAddNewPointComponent.removeElement();
   };
 }

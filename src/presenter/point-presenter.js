@@ -151,6 +151,8 @@ export default class PointPresenter {
 
   #replacePointInsteadForm() {
     replace(this.#tripListPointComponent, this.#tripFormEditPointComponent);
+
+    this.#tripFormEditPointComponent.removeElement();
   }
 
   #replaceFormInsteadPoint() {
@@ -164,7 +166,6 @@ export default class PointPresenter {
       this.#resetFormEditPoint();
 
       this.#replacePointInsteadForm();
-      this.#tripFormEditPointComponent.removeElement();
 
       document.removeEventListener('keydown', this.#escKeyDownHandler);
 
@@ -188,7 +189,6 @@ export default class PointPresenter {
     this.#resetFormEditPoint();
 
     this.#replacePointInsteadForm();
-    this.#tripFormEditPointComponent.removeElement();
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
 

@@ -92,8 +92,7 @@ export default class FormEditPoint extends AbstractStatefulView {
     }
 
     if (this.#mode === Mode.EDIT) {
-      this.#setDatepickerStart();
-      this.#setDatepickerEnd();
+      this.#setDatepicker();
     }
   }
 
@@ -139,7 +138,7 @@ export default class FormEditPoint extends AbstractStatefulView {
     return this._state;
   }
 
-  #setDatepickerStart() {
+  #setDatepicker() {
     this.#datepickerStart = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
@@ -151,9 +150,7 @@ export default class FormEditPoint extends AbstractStatefulView {
         maxDate: this._state.point.dateTo
       }
     );
-  }
 
-  #setDatepickerEnd() {
     this.#datepickerEnd = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
