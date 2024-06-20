@@ -4,7 +4,7 @@ import EventAddButton from '../view/event-add-button.js';
 import FormAddNewPoint from '../view/form-point/form-add-new-point.js';
 
 export default class NewPointPresenter {
-  #offersModel = [];
+  #offersModel = null;
   #destinationsModel = null;
   #filtersModel = null;
   #handleTripEventPointUpdate = null;
