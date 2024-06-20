@@ -4,7 +4,7 @@ import TripFilters from '../view/trip-filters.js';
 
 export default class FiltersPresenter {
   #filtersModel = null;
-  #pointsModel = [];
+  #pointsModel = null;
 
   #currentFilter = null;
 

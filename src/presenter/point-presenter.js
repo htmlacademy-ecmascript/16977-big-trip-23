@@ -49,16 +49,7 @@ export default class PointPresenter {
       onFavoriteButtonClick: () => this.#handleFavoriteButtonClick(),
     });
 
-    this.#tripFormEditPointComponent = new FormEditPoint({
-      point: this.#point,
-      currentDestination: currentDestination,
-      currentOffers: currentOffers,
-      mainOffers: this.#mainOffers,
-      mainDestinations: this.#mainDestinations,
-      onRollupButtonClick: () => this.#handleEditPointHide(),
-      onFormSubmit: this.#handleFormEditPointSubmit,
-      onDeleteButtonClick: this.#handleDeleteButtonClick,
-    });
+    this.#initTripFormEditPointComponent();
 
     if (prevTripEventPoint === null || prevFormEditPoint === null) {
       render(this.#tripListPointComponent, this.#tripEventsList);
@@ -130,6 +121,23 @@ export default class PointPresenter {
     this.#tripFormEditPointComponent.shake(resetFormState);
   }
 
+  #initTripFormEditPointComponent() {
+    const currentDestination = this.#destinationsModel.getDestinationByID(this.#point);
+    const currentOffers = this.#offersModel.getOffersCurrentPoint(this.#point);
+
+    this.#tripFormEditPointComponent = new FormEditPoint({
+      mode: this.#mode,
+      point: this.#point,
+      currentDestination: currentDestination,
+      currentOffers: currentOffers,
+      mainOffers: this.#mainOffers,
+      mainDestinations: this.#mainDestinations,
+      onRollupButtonClick: () => this.#handleEditPointHide(),
+      onFormSubmit: this.#handleFormEditPointSubmit,
+      onDeleteButtonClick: this.#handleDeleteButtonClick,
+    });
+  }
+
   #resetFormEditPoint() {
     const currentDestination = this.#destinationsModel.getDestinationByID(this.#point);
     const currentOffers = this.#offersModel.getOffersCurrentPoint(this.#point);
@@ -143,6 +151,8 @@ export default class PointPresenter {
 
   #replacePointInsteadForm() {
     replace(this.#tripListPointComponent, this.#tripFormEditPointComponent);
+
+    this.#tripFormEditPointComponent.removeElement();
   }
 
   #replaceFormInsteadPoint() {
@@ -166,18 +176,22 @@ export default class PointPresenter {
   #handleEditPointShow = () => {
     this.#handleAllEditFormReset();
 
+    this.#mode = Mode.EDIT;
+
+    this.#initTripFormEditPointComponent();
+
     this.#replaceFormInsteadPoint();
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
-
-    this.#mode = Mode.EDIT;
   };
 
   #handleEditPointHide = () => {
     this.#resetFormEditPoint();
 
     this.#replacePointInsteadForm();
+
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+
 
     this.#mode = Mode.DEFAULT;
   };
