@@ -88,8 +88,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
       this.#eventAvailableOffers.addEventListener('change', this.#offersChangeHandler);
     }
 
-    this.#setDatepickerStart();
-    this.#setDatepickerEnd();
+    this.#setDatepicker();
   }
 
   get template() {
@@ -105,6 +104,20 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     }).getFormPointTemplate();
 
     return new TripListItem({ data: formAddNewPointComponent }).template;
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerStart) {
+      this.#datepickerStart.destroy();
+      this.#datepickerStart = null;
+    }
+
+    if (this.#datepickerEnd) {
+      this.#datepickerEnd.destroy();
+      this.#datepickerEnd = null;
+    }
   }
 
   #stateToPoint(state) {
@@ -133,7 +146,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
     return this._state;
   }
 
-  #setDatepickerStart() {
+  #setDatepicker() {
     this.#datepickerStart = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
@@ -145,9 +158,7 @@ export default class FormAddNewPoint extends AbstractStatefulView {
         maxDate: this._state.point.dateTo
       }
     );
-  }
 
-  #setDatepickerEnd() {
     this.#datepickerEnd = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
@@ -270,17 +281,13 @@ export default class FormAddNewPoint extends AbstractStatefulView {
   };
 
   #dateStartChangeHandler = ([date]) => {
-    this.updateElement(
-      this.#getUpdatedState({ dateFrom: date })
-    );
+    this.#getUpdatedState({ dateFrom: date });
 
     this.#datepickerEnd.set('minDate', date);
   };
 
   #dateEndChangeHandler = ([date]) => {
-    this.updateElement(
-      this.#getUpdatedState({ dateTo: date })
-    );
+    this.#getUpdatedState({ dateTo: date });
 
     this.#datepickerStart.set('maxDate', date);
   };

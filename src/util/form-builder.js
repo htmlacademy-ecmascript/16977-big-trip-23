@@ -121,7 +121,7 @@ const createFormPointTemplate = ({ settingsForm, point, currentDestination, curr
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number"  ${isDisabled ? 'disabled' : ''} required min="1" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number"  ${isDisabled ? 'disabled' : ''} required min="1" max="100000" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
@@ -139,8 +139,8 @@ const createFormPointTemplate = ({ settingsForm, point, currentDestination, curr
 };
 
 export default class FormBuilder {
-  #settingsForm = {};
-  #point = [];
+  #settingsForm = null;
+  #point = null;
   #currentDestination = [];
   #currentOffers = [];
   #mainOffers = [];

@@ -40,7 +40,6 @@ export default class NewPointPresenter {
 
     remove(this.#formAddNewPointComponent);
 
-    this.#initAddNewPointComponent();
     this.#eventAddButtonComponent.element.removeAttribute('disabled');
   }
 
@@ -69,7 +68,6 @@ export default class NewPointPresenter {
           ...this.#formAddNewPointComponent._state.point,
           isSaving: false,
           isDisabled: false,
-          isDelete: false
         }
       });
     };
@@ -77,7 +75,7 @@ export default class NewPointPresenter {
     this.#formAddNewPointComponent.shake(resetFormState);
   }
 
-  #initAddNewPointComponent() {
+  #initFormAddNewPoint() {
     this.#formAddNewPointComponent = new FormAddNewPoint({
       mainOffers: this.#offersModel.offers,
       mainDestinations: this.#destinationsModel.destinations,
@@ -94,7 +92,7 @@ export default class NewPointPresenter {
 
     const tripEventListElement = document.querySelector('.trip-events__list');
 
-    this.#initAddNewPointComponent();
+    this.#initFormAddNewPoint();
 
     render(this.#formAddNewPointComponent, tripEventListElement, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -132,5 +130,7 @@ export default class NewPointPresenter {
     this.destroy();
 
     this.#filtersModel.setFilter(UpdateType.MAJOR, { filter: FiltersType.EVERYTHING, isHidden: false });
+
+    this.#formAddNewPointComponent.removeElement();
   };
 }
